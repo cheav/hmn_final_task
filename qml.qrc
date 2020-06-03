@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>ui/main.qml</file>
+        <file>ui/MainForm.ui.qml</file>
+        <file>ui/ButtonNumber.qml</file>
+        <file>ui/GameField.qml</file>
+        <file>ui/ControlPanel.qml</file>
+        <file>ui/QmlModel.qml</file>
+        <file>ui/images/pause.png</file>
+        <file>ui/images/start.png</file>
+        <file>ui/images/stop.png</file>
+        <file>ui/ControlButton.qml</file>
+    </qresource>
+</RCC>
