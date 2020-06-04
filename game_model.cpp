@@ -1,32 +1,65 @@
 #include "game_model.h"
 #include <cstdlib>
 #include <ctime>
+#include <QDebug>
 
-Number::Number(int num) : m_number(num) { }
+Number::Number(int nNum, bool bVisible)
+    : m_nNumber(nNum), m_bVisible(bVisible) {}
 int Number::number() const
 {
-    return m_number;
+    return m_nNumber;
 }
-void Number::setNumber(int num)
+void Number::setNumber(int nNum)
 {
-    m_number = num;
+    m_nNumber = nNum;
+}
+bool Number::visible() const
+{
+    return m_bVisible;
+}
+void Number::setVisible(bool bVisible)
+{
+    m_bVisible = bVisible;
 }
 //--------------------------------------------------------------------------------
-GameModel::GameModel(QObject *parent) : QAbstractListModel(parent), m_nRows(0), m_nColumns(0),
-    m_nLowRandomNumber(1), m_nHighRandomNumber(9)
+GameModel::GameModel(int nRows, int nColumns, int nLowRandomNumber, int nHighRandomNumber,
+                     QObject *parent)
+    : QAbstractListModel(parent), m_nRows(nRows), m_nColumns(nColumns),
+      m_nLowRandomNumber(nLowRandomNumber), m_nHighRandomNumber(nHighRandomNumber)
 {
-    fill();
+    //fill();
 }
 void GameModel::fill()
 {
-    //srand(time(0));
+    srand(time(0));
+
+    int nRandomRow_visible = 1 + rand() % m_nRows;
+    int nRandomColumn_visible = 1 + rand() % m_nColumns;
+    bool bVisibleNumber = false;
+    int nVisibleNumber = 0;
+
+    beginResetModel();
+
+    m_Numbers.clear();
 
     for(int i = 1; i < m_nRows + 1; ++i)
         for(int j = 1; j < m_nColumns + 1; ++j)
         {
             int nRandomNumber = m_nLowRandomNumber + rand() % m_nHighRandomNumber;
-            m_Numbers.append(Number(nRandomNumber));
+            //
+            bVisibleNumber = false;
+            if(nRandomRow_visible == i && nRandomColumn_visible == j)
+            {
+                bVisibleNumber = true;
+                nVisibleNumber = Number(nRandomNumber, bVisibleNumber).number();
+            }
+            //
+            m_Numbers.append(Number(nRandomNumber, bVisibleNumber));
         }
+
+    qDebug() << nRandomRow_visible << ' ' << nRandomColumn_visible << ": " << nVisibleNumber;
+
+    endResetModel();
 }
 
 int GameModel::rowCount(const QModelIndex &) const
@@ -51,7 +84,6 @@ void GameModel::setRows(int nRows)
     m_nRows = nRows;
     emit rowsChanged();
     //
-    m_Numbers.clear();
     fill();
 }
 void GameModel::setColumns(int nColumns)
@@ -59,7 +91,6 @@ void GameModel::setColumns(int nColumns)
     m_nColumns = nColumns;
     emit columnsChanged();
     //
-    m_Numbers.clear();
     fill();
 }
 
@@ -69,8 +100,8 @@ QVariant GameModel::data(const QModelIndex &index, int role) const
     if (index.row() < rowCount())
         switch (role)
         {
-        case NumberRole: return m_Numbers.at(index.row()).number();
-        //case Qt::UserRole: return m_numbers.at(index.row()).number();
+        case DisplayRole: return m_Numbers.at(index.row()).number();
+        case VisibleRole: return m_Numbers.at(index.row()).visible();
         default: return QVariant();
         }
     return QVariant();
@@ -79,7 +110,8 @@ QVariant GameModel::data(const QModelIndex &index, int role) const
 QHash<int, QByteArray> GameModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    roles[NumberRole] = "number";
+    roles[DisplayRole] = "number";
+    roles[VisibleRole] = "visibleNumber";
     return roles;
 }
 
@@ -99,7 +131,7 @@ void GameModel::set(int row, Number number)
         return;
 
     m_Numbers.replace(row, number);
-    dataChanged(index(row, 0), index(row, 0), { NumberRole });
+    dataChanged(index(row, 0), index(row, 0), { DisplayRole, VisibleRole });
 }
 
 void GameModel::remove(int row)

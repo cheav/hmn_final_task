@@ -2,6 +2,7 @@ import QtQuick 2.8
 import QtQuick.Window 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 1.4
+import com.harman.game 1.0
 
 Window
 {
@@ -16,6 +17,14 @@ Window
 
     property int nTargetNumber: 10
 
+    GameModel
+    {
+        id: game_model
+        rows: 6
+        columns: 10
+    }
+    property alias view: gameField.gridView
+
     GridLayout
     {
         id: mainLayout
@@ -25,7 +34,11 @@ Window
         anchors.fill: parent
         anchors.margins: margin
 
-        GameField{}
+        GameField
+        {
+            id: gameField
+            gameModel: game_model
+        }
 
         Label
         {

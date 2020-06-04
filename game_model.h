@@ -6,11 +6,15 @@
 class Number
 {
 public:
-    Number(int num);
+    Number(int nNum, bool bVisible);
     int number() const;
-    void setNumber(int num);
+    void setNumber(int nNum);
+    //
+    bool visible() const;
+    void setVisible(bool bVisible);
 private:
-    int m_number;
+    int m_nNumber;
+    bool m_bVisible;
 };
 
 class GameModel : public QAbstractListModel
@@ -19,12 +23,16 @@ class GameModel : public QAbstractListModel
     Q_PROPERTY(int rows READ rows WRITE setRows NOTIFY rowsChanged)
     Q_PROPERTY(int columns READ columns WRITE setColumns NOTIFY columnsChanged)
 public:
-    enum NumberRoles
+    enum NumberRole
     {
-        NumberRole = Qt::UserRole + 1
+        DisplayRole = Qt::DisplayRole,
+        VisibleRole = Qt::UserRole + 1
     };
+    Q_ENUM(NumberRole)
 
-    GameModel(QObject *parent = nullptr);
+    GameModel(int nRows = 1, int nColumns = 1,
+              int nLowRandomNumber = 1, int nHighRandomNumber = 9,
+              QObject *parent = nullptr);
     Q_INVOKABLE void fill();
 
     int rowCount(const QModelIndex & = QModelIndex()) const;

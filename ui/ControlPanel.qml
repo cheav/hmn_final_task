@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.3
+import com.harman.game 1.0
 
 GroupBox
 {
@@ -8,6 +9,7 @@ GroupBox
 
     GridLayout
     {
+        id: grid
         rows: 1
         flow: GridLayout.LeftToRight
         anchors.fill: parent
@@ -15,20 +17,24 @@ GroupBox
         ControlButton
         {
             id: startGame
-            imageSource: "images/start.png"
+            imageSource: "icons/start.png"
             Layout.fillWidth: true
-            //onClicked: gameModel
+            onClicked:
+            {
+                //console.log("click " + game_model.rows.toString())
+                game_model.fill()
+            }
         }
         ControlButton
         {
             id: stopGame
-            imageSource: "images/stop.png"
+            imageSource: "icons/stop.png"
             Layout.fillWidth: true
         }
         ControlButton
         {
             id: pauseGame
-            imageSource: "images/pause.png"
+            imageSource: "icons/pause.png"
             Layout.fillWidth: true
         }
         ControlButton
