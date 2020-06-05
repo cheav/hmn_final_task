@@ -22,7 +22,7 @@ GroupBox
             onClicked:
             {
                 //console.log("click " + game_model.rows.toString())
-                game_model.fill()
+                game_model.startGame()
             }
         }
         ControlButton
@@ -30,12 +30,23 @@ GroupBox
             id: stopGame
             imageSource: "icons/stop.png"
             Layout.fillWidth: true
+            onClicked:
+            {
+                //console.log("click " + game_model.rows.toString())
+                game_model.stopGame()
+            }
         }
         ControlButton
         {
             id: pauseGame
             imageSource: "icons/pause.png"
             Layout.fillWidth: true
+            onClicked:
+            {
+                //console.log("click " + game_model.rows.toString())
+                game_model.pauseGame()
+            }
+
         }
         ControlButton
         {

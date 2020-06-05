@@ -3,6 +3,8 @@
 
 #include <QAbstractListModel>
 
+class QTimer;
+
 class Number
 {
 public:
@@ -33,8 +35,7 @@ public:
     GameModel(int nRows = 1, int nColumns = 1,
               int nLowRandomNumber = 1, int nHighRandomNumber = 9,
               QObject *parent = nullptr);
-    Q_INVOKABLE void fill();
-
+public:
     int rowCount(const QModelIndex & = QModelIndex()) const;
     Q_INVOKABLE QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const;
@@ -51,13 +52,25 @@ public:
     Q_INVOKABLE void setColumns(int nColumns);
 
     Q_INVOKABLE int randomNumber(int row, int column);
+    // game logic
+    Q_INVOKABLE void startGame();
+    Q_INVOKABLE void stopGame();
+    Q_INVOKABLE void pauseGame();
 protected:
     QHash<int, QByteArray> roleNames() const;
+private slots:
+    void fillModel();
+    void clearModel();
+    void editModel();
+private:
+    bool GameOverCondition();
+    void GameStop();
 private:
     QList<Number> m_Numbers;
+    QTimer *m_pTimer;
+    //
     int m_nRows;
     int m_nColumns;
-    //
     int m_nLowRandomNumber;
     int m_nHighRandomNumber;
 signals:
