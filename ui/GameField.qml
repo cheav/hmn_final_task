@@ -17,9 +17,10 @@ GroupBox
 
         ButtonNumber
         {
-            buttonVisible: visibleNumber
-            text: number.toString()
-            //text: gameModel.data(view.currentIndex).toString()
+            nButtonNumber: numberValue
+            buttonVisible: numberVisible
+            text: numberValue.toString()
+            //color: game_model.data(view.currentIndex) //numberColor
         }
     }
 
@@ -38,12 +39,6 @@ GroupBox
         cellHeight: height / model.rows
 
         delegate: buttonDelegate
-        focus: true
-
-        Component.onCompleted:
-        {
-            //buttonDelegate.createObject(view)
-        }
     }
 
 } // GroupBox

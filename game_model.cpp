@@ -6,22 +6,30 @@
 #include <QDebug>
 
 Number::Number(int nNum, bool bVisible)
-    : m_nNumber(nNum), m_bVisible(bVisible) {}
+    : m_nNumber(nNum), m_bVisible(bVisible), m_Color(Qt::white) {}
 int Number::number() const
 {
     return m_nNumber;
-}
-void Number::setNumber(int nNum)
-{
-    m_nNumber = nNum;
 }
 bool Number::visible() const
 {
     return m_bVisible;
 }
+QColor Number::color() const
+{
+    return m_Color;
+}
+void Number::setNumber(int nNum)
+{
+    m_nNumber = nNum;
+}
 void Number::setVisible(bool bVisible)
 {
     m_bVisible = bVisible;
+}
+void Number::setColor(QColor& color)
+{
+    m_Color = color;
 }
 //--------------------------------------------------------------------------------
 GameModel::GameModel(int nRows, int nColumns, int nLowRandomNumber, int nHighRandomNumber,
@@ -29,6 +37,9 @@ GameModel::GameModel(int nRows, int nColumns, int nLowRandomNumber, int nHighRan
     : QAbstractListModel(parent), m_nRows(nRows), m_nColumns(nColumns),
       m_nLowRandomNumber(nLowRandomNumber), m_nHighRandomNumber(nHighRandomNumber)
 {
+    generateTargetNumber();
+    m_nUserSelectedNumber = 0;
+
     m_pTimer = new QTimer(this);
     connect(m_pTimer, SIGNAL(timeout()), this, SLOT(editModel()));
     m_pTimer->setInterval(700);
@@ -69,31 +80,39 @@ void GameModel::editModel()
 
     beginResetModel();
 
+    RandomNumbersAppearance();
+
+    endResetModel();
+}
+
+void GameModel::RandomNumbersAppearance()
+{
     srand(time(0));
 
     int nRandomNumber = m_nLowRandomNumber + rand() % m_nHighRandomNumber;
     int nRandomIndex = rand() % (size() - 1);
     int nIndex = 0;
-    bool bFound = false;
+    bool bVisible = false;
     //
     auto it = m_Numbers.begin();
     for(; it != m_Numbers.end(); ++it)
     {
+        // find random index
         if((*it).visible() == false && nRandomIndex == nIndex)
         {
             *it = Number(nRandomNumber, true);
-            bFound = true;
+            bVisible = true;
             break;
         }
+        // find to right of random index
         else if((*it).visible() == true && nRandomIndex == nIndex)
         {
-            // find to right of random index
-            auto it_new = it + 1;
-            for(; it_new != m_Numbers.end(); ++it_new)
-                if((*it_new).visible() == false)
+            it = it + 1;
+            for(; it != m_Numbers.end(); ++it)
+                if((*it).visible() == false)
                 {
-                    *it_new = Number(nRandomNumber, true);
-                    bFound = true;
+                    *it = Number(nRandomNumber, true);
+                    bVisible = true;
                     break;
                 }
             break;
@@ -101,7 +120,7 @@ void GameModel::editModel()
         ++nIndex;
     }
     // find to left of random index
-    if(bFound == false)
+    if(bVisible == false)
     {
         it = m_Numbers.begin();
         for(; it != m_Numbers.end(); ++it)
@@ -113,8 +132,6 @@ void GameModel::editModel()
     }
 
     qDebug() << nRandomIndex;
-
-    endResetModel();
 }
 bool GameModel::GameOverCondition()
 {
@@ -129,7 +146,7 @@ bool GameModel::GameOverCondition()
     int nGameOverCondition = 2 * size();
     nGameOverCondition /= 3;
 
-    if(nCount == nGameOverCondition)
+    if(nCount > nGameOverCondition)
         bGameFieldFull = true;
 
     return bGameFieldFull;
@@ -152,6 +169,53 @@ void GameModel::stopGame()
 void GameModel::pauseGame()
 {
     m_pTimer->stop();
+}
+void GameModel::setTargetNumber(int nNum)
+{
+    m_nTargetNumber = nNum;
+}
+void GameModel::setUserSelectedNumber(int nNum)
+{
+    m_nUserSelectedNumber = nNum;
+}
+
+int GameModel::targetNumber() const
+{
+    return m_nTargetNumber;
+}
+int GameModel::userSelectedNumber() const
+{
+    return m_nUserSelectedNumber;
+}
+void GameModel::reactionOnUserAction(int nUserSelectedNumber, int nIndex)
+{
+    qDebug() << "grid view index = " << nIndex;
+    QModelIndex index;
+
+    setUserSelectedNumber(nUserSelectedNumber);
+
+    if(testOnEquality())
+    {
+        generateTargetNumber();
+        if(index.isValid())
+        {
+            qDebug() << "index is valid";
+            setData(index, "green", ColorRole);
+            setData(index, nUserSelectedNumber, ValueRole);
+        }
+        emit targetNumberChanged();
+    }
+}
+bool GameModel::testOnEquality() const
+{
+    if(m_nUserSelectedNumber == m_nTargetNumber)
+        return true;
+    return false;
+}
+void GameModel::generateTargetNumber()
+{
+    srand(time(0));
+    m_nTargetNumber = 1 + rand() % 8;
 }
 //-------------------------------------------------------------------------------------------------
 int GameModel::rowCount(const QModelIndex &) const
@@ -192,18 +256,51 @@ QVariant GameModel::data(const QModelIndex &index, int role) const
     if (index.row() < rowCount())
         switch (role)
         {
-        case DisplayRole: return m_Numbers.at(index.row()).number();
+        case ValueRole: return m_Numbers.at(index.row()).number();
         case VisibleRole: return m_Numbers.at(index.row()).visible();
+        case ColorRole: return m_Numbers.at(index.row()).color();
         default: return QVariant();
         }
     return QVariant();
 }
+bool GameModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    bool result = false;
 
+    switch(role)
+    {
+    case ValueRole:
+    {
+        int nValue = 0;//value.toInt() + 1;
+        Number& rNumber = getItem(index);
+        rNumber.setNumber(nValue);
+        result = true;
+    }
+    case ColorRole:
+    {
+        QString strValue = value.toString();
+        QColor color(strValue);
+        Number& rNumber = getItem(index);
+        rNumber.setColor(color);
+        result = true;
+    }
+    default:{}
+    }
+
+    if (result) emit dataChanged(index, index);
+    return result;
+}
+Number& GameModel::getItem(const QModelIndex &index) const
+{
+    Number& rcItem = const_cast<Number&>(m_Numbers[index.row()]);
+    return rcItem;
+}
 QHash<int, QByteArray> GameModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    roles[DisplayRole] = "number";
-    roles[VisibleRole] = "visibleNumber";
+    roles[ValueRole] = "numberValue";
+    roles[VisibleRole] = "numberVisible";
+    roles[ColorRole] = "numberColor";
     return roles;
 }
 
@@ -223,7 +320,7 @@ void GameModel::set(int row, Number number)
         return;
 
     m_Numbers.replace(row, number);
-    dataChanged(index(row, 0), index(row, 0), { DisplayRole, VisibleRole });
+    dataChanged(index(row, 0), index(row, 0), { ValueRole, VisibleRole, ColorRole });
 }
 
 void GameModel::remove(int row)
@@ -242,9 +339,9 @@ QModelIndex GameModel::index(int row, int column, const QModelIndex &parent) con
     QModelIndex index = createIndex(row, column);
     return index;
 }
-int GameModel::randomNumber(int row, int column)
+int GameModel::randomNumber(int nRow, int nColumn)
 {
-    QModelIndex idx = index(row, column);
+    QModelIndex idx = index(nRow, nColumn);
     return (data(idx)).toInt();
 }
 

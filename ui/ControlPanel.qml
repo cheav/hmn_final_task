@@ -32,7 +32,6 @@ GroupBox
             Layout.fillWidth: true
             onClicked:
             {
-                //console.log("click " + game_model.rows.toString())
                 game_model.stopGame()
             }
         }
@@ -43,7 +42,6 @@ GroupBox
             Layout.fillWidth: true
             onClicked:
             {
-                //console.log("click " + game_model.rows.toString())
                 game_model.pauseGame()
             }
 

@@ -6,6 +6,7 @@ import com.harman.game 1.0
 
 Window
 {
+    id: root
     visible: true
     title: qsTr("Game Find Sum")
 
@@ -15,13 +16,15 @@ Window
     minimumWidth: mainLayout.Layout.minimumWidth + 2 * margin
     minimumHeight: mainLayout.Layout.minimumHeight + 2 * margin
 
-    property int nTargetNumber: 10
-
     GameModel
     {
         id: game_model
         rows: 6
         columns: 10
+        onTargetNumberChanged:
+        {
+            targetLabel.text = targetNumber.toString()
+        }
     }
     property alias view: gameField.gridView
 
@@ -42,6 +45,7 @@ Window
 
         Label
         {
+            id: targetLabel
             color: "blue"
             font
             {
@@ -49,7 +53,7 @@ Window
                 pointSize: 20
                 bold: true
             }
-            text: nTargetNumber.toString()
+            text: game_model.targetNumber.toString()
         }
 
         ControlPanel
