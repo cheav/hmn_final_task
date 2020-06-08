@@ -28,7 +28,7 @@ Rectangle
             oldColor = root.color
             //root.color = Qt.darker(oldColor)
             root.color = Qt.lighter("green")
-            gameModel.reactionOnUserAction(nButtonNumber, nButtonIndex)
+            gameLogic.reactionOnUserAction(nButtonNumber, nButtonIndex)
 
             //(game_model.data(gridView.currentIndex)).toString()
         }
@@ -41,7 +41,7 @@ Rectangle
     Text
     {
         id: text
-        anchors.centerIn:parent
+        anchors.centerIn: parent
         font
         {
             family: "Arial"

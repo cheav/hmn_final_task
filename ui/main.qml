@@ -2,7 +2,8 @@ import QtQuick 2.8
 import QtQuick.Window 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 1.4
-import com.harman.game 1.0
+import com.harman.game_model 1.0
+import com.harman.game_logic 1.0
 
 Window
 {
@@ -21,6 +22,13 @@ Window
         id: gameModel
         rows: 6
         columns: 10
+    }
+
+    GameLogic
+    {
+        id: gameLogic
+        gameModel: gameModel.gameModel
+
         onTargetNumberChanged:
         {
             targetLabel.text = targetNumber.toString()
@@ -45,7 +53,6 @@ Window
             root.title = qsTr("Game Find Sum: GAME OVER !")
         }
     }
-    property alias view: gameField.gridView
 
     GridLayout
     {
@@ -72,7 +79,7 @@ Window
                 pointSize: 20
                 bold: true
             }
-            text: gameModel.targetNumber.toString()
+            text: gameLogic.targetNumber.toString()
         }
 
         ControlPanel

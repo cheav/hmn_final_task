@@ -13,9 +13,10 @@ project(find_sum LANGUAGES CXX)
 
 find_package(Qt5 COMPONENTS Core Quick REQUIRED)
 
-qt5_wrap_cpp(MOC_WRAPPERS game_model.h)
+qt5_wrap_cpp(MOC_WRAPPERS number.h game_model.h game_logic.h)
 qt5_add_resources(QRC_WRAPPERS qml.qrc)
 
-add_executable(${PROJECT_NAME} main.cpp game_model.cpp ${MOC_WRAPPERS} ${QRC_WRAPPERS})
+add_executable(${PROJECT_NAME} main.cpp number.cpp game_model.cpp game_logic.cpp
+    ${MOC_WRAPPERS} ${QRC_WRAPPERS})
 
 target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Quick)

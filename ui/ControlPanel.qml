@@ -1,7 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.3
-import com.harman.game 1.0
 
 GroupBox
 {
@@ -21,8 +20,7 @@ GroupBox
             Layout.fillWidth: true
             onClicked:
             {
-                //console.log("click " + game_model.rows.toString())
-                gameModel.startGame()
+                gameLogic.startGame()
             }
         }
         ControlButton
@@ -32,7 +30,7 @@ GroupBox
             Layout.fillWidth: true
             onClicked:
             {
-                gameModel.stopGame()
+                gameLogic.stopGame()
             }
         }
         ControlButton
@@ -42,7 +40,7 @@ GroupBox
             Layout.fillWidth: true
             onClicked:
             {
-                gameModel.pauseGame()
+                gameLogic.pauseGame()
             }
 
         }

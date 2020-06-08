@@ -1,51 +1,69 @@
 #include "game_model.h"
-#include <cstdlib>
-#include <ctime>
 
-#include <QTimer>
-#include <QDebug>
-
-Number::Number(int nNum, bool bVisible)
-    : m_nNumber(nNum), m_bVisible(bVisible), m_Color(Qt::white) {}
-int Number::number() const
-{
-    return m_nNumber;
-}
-bool Number::visible() const
-{
-    return m_bVisible;
-}
-QColor Number::color() const
-{
-    return m_Color;
-}
-void Number::setNumber(int nNum)
-{
-    m_nNumber = nNum;
-}
-void Number::setVisible(bool bVisible)
-{
-    m_bVisible = bVisible;
-}
-void Number::setColor(QColor& color)
-{
-    m_Color = color;
-}
 //--------------------------------------------------------------------------------
 GameModel::GameModel(int nRows, int nColumns, int nLowRandomNumber, int nHighRandomNumber,
-                     QObject *parent)
-    : QAbstractListModel(parent), m_nRows(nRows), m_nColumns(nColumns),
+                     QObject *pParent)
+    : QAbstractListModel(pParent), m_pGameModel(this), m_nRows(nRows), m_nColumns(nColumns),
       m_nLowRandomNumber(nLowRandomNumber), m_nHighRandomNumber(nHighRandomNumber)
 {
-    generateTargetNumber();
-    m_nUserSelectedNumber = 0;
-
-    m_pTimer = new QTimer(this);
-    connect(m_pTimer, SIGNAL(timeout()), this, SLOT(editModel()));
-    m_pTimer->setInterval(700);
 }
 //-------------------------------------------------------------------------------------------------
-// Game Logic
+GameModel* GameModel::gameModel() const
+{
+    return m_pGameModel;
+}
+void GameModel::setGameModel(GameModel* pGameModel)
+{
+    m_pGameModel = pGameModel;
+}
+
+void GameModel::beginResetModel()
+{
+    QAbstractListModel::beginResetModel();
+}
+void GameModel::endResetModel()
+{
+    QAbstractListModel::endResetModel();
+}
+
+model_iterator GameModel::begin()
+{
+    QList<Number>::iterator it = m_Numbers.begin();
+    return it;
+}
+model_iterator GameModel::end()
+{
+    QList<Number>::iterator it = m_Numbers.end();
+    return it;
+}
+
+int GameModel::lowRandomNumber() const
+{
+    return m_nLowRandomNumber;
+}
+void GameModel::setLowRandomNumber(int lowRandomNum)
+{
+    m_nLowRandomNumber = lowRandomNum;
+}
+
+int GameModel::highRandomNumber() const
+{
+    return m_nHighRandomNumber;
+}
+void GameModel::setHighRandomNumber(int highRandomNum)
+{
+    m_nHighRandomNumber = highRandomNum;
+}
+
+int GameModel::newRandomValue() const
+{
+    return m_nNewRandomValue;
+}
+void GameModel::setNewRandomValue(int nNewRandomValue)
+{
+    m_nNewRandomValue = nNewRandomValue;
+}
+
 void GameModel::fillModel()
 {
     srand(time(0));
@@ -54,8 +72,8 @@ void GameModel::fillModel()
 
     m_Numbers.clear();
 
-    for(int i = 1; i < m_nRows + 1; ++i)
-        for(int j = 1; j < m_nColumns + 1; ++j)
+    for(int i = 0; i < m_nRows; ++i)
+        for(int j = 0; j < m_nColumns; ++j)
         {
             int nRandomNumber = m_nLowRandomNumber + rand() % m_nHighRandomNumber;
             m_Numbers.append(Number(nRandomNumber, false));
@@ -68,167 +86,6 @@ void GameModel::clearModel()
     beginResetModel();
     m_Numbers.clear();
     endResetModel();
-}
-void GameModel::editModel()
-{
-    if(GameOverCondition() == true)
-    {
-        qDebug() << "Game Over";
-        runGameOver();
-        return;
-    }
-
-    beginResetModel();
-
-    RandomNumbersAppearance();
-
-    endResetModel();
-}
-
-void GameModel::RandomNumbersAppearance()
-{
-    srand(time(0));
-
-    int nRandomNumber = m_nLowRandomNumber + rand() % m_nHighRandomNumber;
-    int nRandomIndex = rand() % (size() - 1);
-    int nIndex = 0;
-    bool bVisible = false;
-    //
-    auto it = m_Numbers.begin();
-    for(; it != m_Numbers.end(); ++it)
-    {
-        // find random index
-        if((*it).visible() == false && nRandomIndex == nIndex)
-        {
-            *it = Number(nRandomNumber, true);
-            bVisible = true;
-            break;
-        }
-        // find to right of random index
-        else if((*it).visible() == true && nRandomIndex == nIndex)
-        {
-            it = it + 1;
-            for(; it != m_Numbers.end(); ++it)
-                if((*it).visible() == false)
-                {
-                    *it = Number(nRandomNumber, true);
-                    bVisible = true;
-                    break;
-                }
-            break;
-        }
-        ++nIndex;
-    }
-    // find to left of random index
-    if(bVisible == false)
-    {
-        it = m_Numbers.begin();
-        for(; it != m_Numbers.end(); ++it)
-            if((*it).visible() == false)
-            {
-                *it = Number(nRandomNumber, true);
-                break;
-            }
-    }
-
-    qDebug() << nRandomIndex;
-}
-bool GameModel::GameOverCondition()
-{
-    bool bGameFieldFull = false;
-
-    int nCount = 0;
-    auto it = m_Numbers.begin();
-    for(; it != m_Numbers.end(); ++it)
-        if((*it).visible() == true)
-            ++nCount;
-
-    int nGameOverCondition = 2 * size();
-    nGameOverCondition /= 3;
-
-    if(nCount > nGameOverCondition)
-        bGameFieldFull = true;
-
-    return bGameFieldFull;
-}
-void GameModel::runGameOver()
-{
-    m_pTimer->stop();
-    emit gameStopped();
-    emit gameOver();
-}
-
-void GameModel::startGame()
-{
-    if(empty())
-        fillModel();
-    m_pTimer->start();
-    emit gameStarted();
-}
-void GameModel::stopGame()
-{
-    m_pTimer->stop();
-    clearModel();
-    emit gameStopped();
-}
-void GameModel::pauseGame()
-{
-    m_pTimer->stop();
-    emit gamePaused();
-}
-void GameModel::setTargetNumber(int nNum)
-{
-    m_nTargetNumber = nNum;
-}
-void GameModel::setUserSelectedNumber(int nNum)
-{
-    m_nUserSelectedNumber = nNum;
-}
-
-int GameModel::targetNumber() const
-{
-    return m_nTargetNumber;
-}
-int GameModel::userSelectedNumber() const
-{
-    return m_nUserSelectedNumber;
-}
-void GameModel::reactionOnUserAction(int nUserSelectedNumber, int nIndex)
-{
-    qDebug() << "grid view index = " << nIndex;
-    QModelIndex modelIndex = index(nIndex,0);
-
-    setUserSelectedNumber(nUserSelectedNumber);
-
-    if(testOnEquality())
-    {
-        generateTargetNumber();
-        if(modelIndex.isValid())
-        {
-            //qDebug() << "index is valid";
-            setData(modelIndex, "green", ColorRole);
-            setData(modelIndex, nUserSelectedNumber, ValueRole);
-        }
-        emit targetNumberChanged();
-    }
-}
-bool GameModel::testOnEquality() const
-{
-    if(m_nUserSelectedNumber == m_nTargetNumber)
-        return true;
-    return false;
-}
-bool GameModel::generateTargetNumber()
-{
-    srand(time(0));
-    m_nTargetNumber = 1 + rand() % 8;
-    return m_nTargetNumber;
-}
-bool GameModel::generateFieldNumber()
-{
-    srand(time(0));
-    int nFieldNumber = 1 + rand() % 8;
-    return nFieldNumber;
 }
 //-------------------------------------------------------------------------------------------------
 int GameModel::rowCount(const QModelIndex &) const
@@ -256,14 +113,14 @@ void GameModel::setRows(int nRows)
 {
     m_nRows = nRows;
     emit rowsChanged();
-    //
+
     fillModel();
 }
 void GameModel::setColumns(int nColumns)
 {
     m_nColumns = nColumns;
     emit columnsChanged();
-    //
+
     fillModel();
 }
 
@@ -289,7 +146,7 @@ bool GameModel::setData(const QModelIndex &index, const QVariant &value, int rol
     {
     case ValueRole:
     {
-        int nValue = generateFieldNumber();
+        int nValue = newRandomValue(); // before must set in game logic
         Number& rNumber = getItem(index);
         rNumber.setNumber(nValue);
         rNumber.setVisible(false);
@@ -358,11 +215,6 @@ QModelIndex GameModel::index(int row, int column, const QModelIndex &parent) con
     Q_UNUSED(parent);
     QModelIndex index = createIndex(row, column);
     return index;
-}
-int GameModel::randomNumber(int nRow, int nColumn)
-{
-    QModelIndex idx = index(nRow, nColumn);
-    return (data(idx)).toInt();
 }
 
 
