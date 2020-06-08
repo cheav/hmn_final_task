@@ -18,12 +18,31 @@ Window
 
     GameModel
     {
-        id: game_model
+        id: gameModel
         rows: 6
         columns: 10
         onTargetNumberChanged:
         {
             targetLabel.text = targetNumber.toString()
+        }
+        onGameStarted:
+        {
+            gameField.gridViewEnabled = true
+            root.title = qsTr("Game Find Sum: running")
+        }
+        onGameStopped:
+        {
+            gameField.gridViewEnabled = false
+            root.title = qsTr("Game Find Sum: stopped")
+        }
+        onGamePaused:
+        {
+            gameField.gridViewEnabled = false
+            root.title = qsTr("Game Find Sum: paused")
+        }
+        onGameOver:
+        {
+            root.title = qsTr("Game Find Sum: GAME OVER !")
         }
     }
     property alias view: gameField.gridView
@@ -40,7 +59,7 @@ Window
         GameField
         {
             id: gameField
-            gameModel: game_model
+            gridModel: gameModel
         }
 
         Label
@@ -53,7 +72,7 @@ Window
                 pointSize: 20
                 bold: true
             }
-            text: game_model.targetNumber.toString()
+            text: gameModel.targetNumber.toString()
         }
 
         ControlPanel

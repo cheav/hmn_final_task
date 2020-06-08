@@ -5,6 +5,7 @@ Rectangle
 {
     id: root
     property int nButtonNumber
+    property int nButtonIndex
 
     property alias buttonVisible: root.visible
     property alias text: text.text
@@ -27,15 +28,9 @@ Rectangle
             oldColor = root.color
             //root.color = Qt.darker(oldColor)
             root.color = Qt.lighter("green")
-            game_model.reactionOnUserAction(nButtonNumber, view.currentIndex)
+            gameModel.reactionOnUserAction(nButtonNumber, nButtonIndex)
 
-//            if(game_model.equalityTest())
-//            {
-//                root.visible = false
-//            }
-            //strNumberSelected = (game_model.data(gridView.currentIndex)).toString()
-            //game_model.setData(view.currentIndex, "green")
-            //numberColor = root.color
+            //(game_model.data(gridView.currentIndex)).toString()
         }
         //
         //onReleased: root.color = oldColor
@@ -47,12 +42,10 @@ Rectangle
     {
         id: text
         anchors.centerIn:parent
-        //font.pointSize: 12
         font
         {
             family: "Arial"
             pointSize: 14
-            //bold: true
         }
         text: parent.text
     }

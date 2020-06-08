@@ -4,13 +4,14 @@ import QtQuick.Layouts 1.3
 
 GroupBox
 {
-    property alias gameModel: view.model
+    property alias gridModel: view.model
     property alias gridView: view
+    property alias gridViewEnabled: view.enabled
 
     id: gridBox
     Layout.fillWidth: true
     Layout.fillHeight: true
-    //
+
     Component
     {
         id: buttonDelegate
@@ -18,9 +19,13 @@ GroupBox
         ButtonNumber
         {
             nButtonNumber: numberValue
+            nButtonIndex: numberIndex
             buttonVisible: numberVisible
             text: numberValue.toString()
-            //color: game_model.data(view.currentIndex) //numberColor
+
+            Component.onCompleted: {
+                //console.log("button number completed")
+            }
         }
     }
 

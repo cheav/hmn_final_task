@@ -22,7 +22,7 @@ GroupBox
             onClicked:
             {
                 //console.log("click " + game_model.rows.toString())
-                game_model.startGame()
+                gameModel.startGame()
             }
         }
         ControlButton
@@ -32,7 +32,7 @@ GroupBox
             Layout.fillWidth: true
             onClicked:
             {
-                game_model.stopGame()
+                gameModel.stopGame()
             }
         }
         ControlButton
@@ -42,7 +42,7 @@ GroupBox
             Layout.fillWidth: true
             onClicked:
             {
-                game_model.pauseGame()
+                gameModel.pauseGame()
             }
 
         }

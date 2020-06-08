@@ -5,7 +5,6 @@
         <file>ui/ButtonNumber.qml</file>
         <file>ui/GameField.qml</file>
         <file>ui/ControlPanel.qml</file>
-        <file>ui/QmlModel.qml</file>
         <file>ui/icons/pause.png</file>
         <file>ui/icons/start.png</file>
         <file>ui/icons/stop.png</file>

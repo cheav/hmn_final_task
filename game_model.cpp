@@ -74,7 +74,7 @@ void GameModel::editModel()
     if(GameOverCondition() == true)
     {
         qDebug() << "Game Over";
-        GameStop();
+        runGameOver();
         return;
     }
 
@@ -151,24 +151,30 @@ bool GameModel::GameOverCondition()
 
     return bGameFieldFull;
 }
-void GameModel::GameStop()
+void GameModel::runGameOver()
 {
     m_pTimer->stop();
+    emit gameStopped();
+    emit gameOver();
 }
 
 void GameModel::startGame()
 {
-    fillModel();
+    if(empty())
+        fillModel();
     m_pTimer->start();
+    emit gameStarted();
 }
 void GameModel::stopGame()
 {
-    clearModel();
     m_pTimer->stop();
+    clearModel();
+    emit gameStopped();
 }
 void GameModel::pauseGame()
 {
     m_pTimer->stop();
+    emit gamePaused();
 }
 void GameModel::setTargetNumber(int nNum)
 {
@@ -190,18 +196,18 @@ int GameModel::userSelectedNumber() const
 void GameModel::reactionOnUserAction(int nUserSelectedNumber, int nIndex)
 {
     qDebug() << "grid view index = " << nIndex;
-    QModelIndex index;
+    QModelIndex modelIndex = index(nIndex,0);
 
     setUserSelectedNumber(nUserSelectedNumber);
 
     if(testOnEquality())
     {
         generateTargetNumber();
-        if(index.isValid())
+        if(modelIndex.isValid())
         {
-            qDebug() << "index is valid";
-            setData(index, "green", ColorRole);
-            setData(index, nUserSelectedNumber, ValueRole);
+            //qDebug() << "index is valid";
+            setData(modelIndex, "green", ColorRole);
+            setData(modelIndex, nUserSelectedNumber, ValueRole);
         }
         emit targetNumberChanged();
     }
@@ -212,15 +218,26 @@ bool GameModel::testOnEquality() const
         return true;
     return false;
 }
-void GameModel::generateTargetNumber()
+bool GameModel::generateTargetNumber()
 {
     srand(time(0));
     m_nTargetNumber = 1 + rand() % 8;
+    return m_nTargetNumber;
+}
+bool GameModel::generateFieldNumber()
+{
+    srand(time(0));
+    int nFieldNumber = 1 + rand() % 8;
+    return nFieldNumber;
 }
 //-------------------------------------------------------------------------------------------------
 int GameModel::rowCount(const QModelIndex &) const
 {
     return m_Numbers.count();
+}
+bool GameModel::empty() const
+{
+    return m_Numbers.empty();
 }
 int GameModel::size() const
 {
@@ -259,6 +276,7 @@ QVariant GameModel::data(const QModelIndex &index, int role) const
         case ValueRole: return m_Numbers.at(index.row()).number();
         case VisibleRole: return m_Numbers.at(index.row()).visible();
         case ColorRole: return m_Numbers.at(index.row()).color();
+        case IndexRole: return index.row();
         default: return QVariant();
         }
     return QVariant();
@@ -271,9 +289,10 @@ bool GameModel::setData(const QModelIndex &index, const QVariant &value, int rol
     {
     case ValueRole:
     {
-        int nValue = 0;//value.toInt() + 1;
+        int nValue = generateFieldNumber();
         Number& rNumber = getItem(index);
         rNumber.setNumber(nValue);
+        rNumber.setVisible(false);
         result = true;
     }
     case ColorRole:
@@ -301,6 +320,7 @@ QHash<int, QByteArray> GameModel::roleNames() const
     roles[ValueRole] = "numberValue";
     roles[VisibleRole] = "numberVisible";
     roles[ColorRole] = "numberColor";
+    roles[IndexRole] = "numberIndex";
     return roles;
 }
 
@@ -320,7 +340,7 @@ void GameModel::set(int row, Number number)
         return;
 
     m_Numbers.replace(row, number);
-    dataChanged(index(row, 0), index(row, 0), { ValueRole, VisibleRole, ColorRole });
+    dataChanged(index(row, 0), index(row, 0), { ValueRole, VisibleRole, ColorRole, IndexRole });
 }
 
 void GameModel::remove(int row)

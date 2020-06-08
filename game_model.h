@@ -35,6 +35,7 @@ public:
         ValueRole = Qt::DisplayRole,
         VisibleRole = Qt::UserRole + 1,
         ColorRole = Qt::UserRole + 2,
+        IndexRole = Qt::UserRole + 3,
     };
     Q_ENUM(NumberRole)
 
@@ -53,7 +54,8 @@ public:
     void set(int row, Number number);
     void remove(int row);
 
-    Q_INVOKABLE int size() const;
+    bool empty() const;
+    int size() const;
     Q_INVOKABLE int rows() const;
     Q_INVOKABLE int columns() const;
 
@@ -73,7 +75,8 @@ public:
     //
     Q_INVOKABLE void reactionOnUserAction(int nUserSelectedNumber, int nIndex);
     bool testOnEquality() const;
-    void generateTargetNumber();
+    bool generateTargetNumber();
+    bool generateFieldNumber();
 protected:
     QHash<int, QByteArray> roleNames() const;
 private slots:
@@ -83,7 +86,7 @@ private slots:
 private:
     void RandomNumbersAppearance();
     bool GameOverCondition();
-    void GameStop();
+    void runGameOver();
 private:
     QList<Number> m_Numbers;
     QList<Number> m_UserSelectedNumbers;
@@ -98,7 +101,12 @@ private:
 signals:
     void rowsChanged();
     void columnsChanged();
+    //
     void targetNumberChanged();
+    void gameStarted();
+    void gameStopped();
+    void gamePaused();
+    void gameOver();
 };
 
 #endif // GAME_MODEL_H
