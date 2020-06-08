@@ -27,13 +27,14 @@ Rectangle
         {
             oldColor = root.color
             //root.color = Qt.darker(oldColor)
-            root.color = Qt.lighter("green")
-            gameLogic.reactionOnUserAction(nButtonNumber, nButtonIndex)
+            root.color = Qt.lighter("blue")
+            gameLogic.reactionOnUserAction(nButtonNumber, nButtonIndex, root.color)
 
+            //text.color = "red"
             //(game_model.data(gridView.currentIndex)).toString()
         }
         //
-        //onReleased: root.color = oldColor
+        //onReleased: root.color = Qt.lighter("green") //oldColor
 
         onClicked: root.clicked()
     } // MouseArea

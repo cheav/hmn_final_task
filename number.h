@@ -1,23 +1,23 @@
 #ifndef NUMBER_H
 #define NUMBER_H
 
-#include <QColor>
+#include <QString>
 
 class Number
 {
 public:
-    Number(int nNum, bool bVisible);
+    Number(int nNum = 0, bool bVisible = false);
     int number() const;
     bool visible() const;
-    QColor color() const;
+    QString color() const;
 
     void setNumber(int nNum);
     void setVisible(bool bVisible);
-    void setColor(QColor& color);
+    void setColor(QString& color);
 private:
     int m_nNumber;
     bool m_bVisible;
-    QColor m_Color;
+    QString m_Color;
 };
 
 #endif // NUMBER_H

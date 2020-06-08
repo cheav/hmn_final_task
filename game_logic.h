@@ -28,16 +28,17 @@ public:
     int targetNumber() const;
     int userSelectedNumber() const;
 
-    Q_INVOKABLE void reactionOnUserAction(int nUserSelectedNumber, int nIndex);
+    Q_INVOKABLE void reactionOnUserAction(int nUserSelectedNumber, int nIndex, QString strColor);
     bool testOnEquality() const;
     bool generateTargetNumber();
     bool generateFieldNumber();
 
-    void RandomNumberVisible();
+    void NewRandomNumberVisible();
     bool GameOverCondition();
     void runGameOver();
 public slots:
     void editModel();
+    void onGameModelChanged();
 private:
     GameModel *m_pGameModel;
     //

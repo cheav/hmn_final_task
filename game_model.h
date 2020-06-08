@@ -48,15 +48,15 @@ public slots:
     void clearModel();
 public:
     int rowCount(const QModelIndex & = QModelIndex()) const;
-    Q_INVOKABLE QVariant data(const QModelIndex &index, int role = ValueRole) const;
-    Q_INVOKABLE bool setData(const QModelIndex &index, const QVariant &value, int role = ValueRole);
-    QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const;
+    Q_INVOKABLE QVariant data(const QModelIndex &rcIndex, int nRole = ValueRole) const;
+    Q_INVOKABLE bool setData(const QModelIndex &rcIndex, const QVariant &rValue, int nRole = ValueRole);
+    QModelIndex index(int nRow, int nColumn = 0, const QModelIndex &parent = QModelIndex()) const;
 
-    Number& getItem(const QModelIndex &index) const;
+    Number& getItem(const QModelIndex &rcIndex) const;
 
     void append(Number number);
-    void set(int row, Number number);
-    void remove(int row);
+    void set(int nRow, Number number);
+    void remove(int nRow);
 
     bool empty() const;
     int size() const;

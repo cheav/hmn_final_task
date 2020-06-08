@@ -125,50 +125,47 @@ void GameModel::setColumns(int nColumns)
 }
 
 
-QVariant GameModel::data(const QModelIndex &index, int role) const
+QVariant GameModel::data(const QModelIndex &rcIndex, int nRole) const
 {
-    if (index.row() < rowCount())
-        switch (role)
+    if (rcIndex.row() < rowCount())
+        switch (nRole)
         {
-        case ValueRole: return m_Numbers.at(index.row()).number();
-        case VisibleRole: return m_Numbers.at(index.row()).visible();
-        case ColorRole: return m_Numbers.at(index.row()).color();
-        case IndexRole: return index.row();
+        case ValueRole: return m_Numbers.at(rcIndex.row()).number();
+        case VisibleRole: return m_Numbers.at(rcIndex.row()).visible();
+        case ColorRole: return m_Numbers.at(rcIndex.row()).color();
+        case IndexRole: return rcIndex.row();
         default: return QVariant();
         }
     return QVariant();
 }
-bool GameModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool GameModel::setData(const QModelIndex &rcIndex, const QVariant &rValue, int nRole)
 {
     bool result = false;
 
-    switch(role)
+    switch(nRole)
     {
     case ValueRole:
     {
-        int nValue = newRandomValue(); // before must set in game logic
-        Number& rNumber = getItem(index);
-        rNumber.setNumber(nValue);
-        rNumber.setVisible(false);
+        int nValue = newRandomValue(); // before value must set in game logic
+        Number number(nValue, false);
+        set(rcIndex.row(), number);
         result = true;
     }
     case ColorRole:
     {
-        QString strValue = value.toString();
-        QColor color(strValue);
-        Number& rNumber = getItem(index);
-        rNumber.setColor(color);
+        QString strColor = rValue.toString();
+        m_Numbers[rcIndex.row()].setColor(strColor);
         result = true;
     }
     default:{}
     }
 
-    if (result) emit dataChanged(index, index);
+    if (result) emit dataChanged(rcIndex, rcIndex);
     return result;
 }
-Number& GameModel::getItem(const QModelIndex &index) const
+Number& GameModel::getItem(const QModelIndex &rcIndex) const
 {
-    Number& rcItem = const_cast<Number&>(m_Numbers[index.row()]);
+    Number& rcItem = const_cast<Number&>(m_Numbers[rcIndex.row()]);
     return rcItem;
 }
 QHash<int, QByteArray> GameModel::roleNames() const
@@ -183,37 +180,37 @@ QHash<int, QByteArray> GameModel::roleNames() const
 
 void GameModel::append(Number number)
 {
-    int row = 0;
-    while (row < m_Numbers.count())
-        ++row;
-    beginInsertRows(QModelIndex(), row, row);
-    m_Numbers.insert(row, number);
+    int nRow = 0;
+    while (nRow < m_Numbers.count())
+        ++nRow;
+    beginInsertRows(QModelIndex(), nRow, nRow);
+    m_Numbers.insert(nRow, number);
     endInsertRows();
 }
 
-void GameModel::set(int row, Number number)
+void GameModel::set(int nRow, Number number)
 {
-    if (row < 0 || row >= m_Numbers.count())
+    if (nRow < 0 || nRow >= m_Numbers.count())
         return;
 
-    m_Numbers.replace(row, number);
-    dataChanged(index(row, 0), index(row, 0), { ValueRole, VisibleRole, ColorRole, IndexRole });
+    m_Numbers.replace(nRow, number);
+    dataChanged(index(nRow, 0), index(nRow, 0), { ValueRole, VisibleRole, ColorRole, IndexRole });
 }
 
-void GameModel::remove(int row)
+void GameModel::remove(int nRow)
 {
-    if (row < 0 || row >= m_Numbers.count())
+    if (nRow < 0 || nRow >= m_Numbers.count())
         return;
 
-    beginRemoveRows(QModelIndex(), row, row);
-    m_Numbers.removeAt(row);
+    beginRemoveRows(QModelIndex(), nRow, nRow);
+    m_Numbers.removeAt(nRow);
     endRemoveRows();
 }
 
-QModelIndex GameModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex GameModel::index(int nRow, int nColumn, const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    QModelIndex index = createIndex(row, column);
+    QModelIndex index = createIndex(nRow, nColumn);
     return index;
 }
 

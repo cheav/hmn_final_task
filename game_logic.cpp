@@ -7,10 +7,8 @@
 #include <QTimer>
 #include <QDebug>
 
-GameLogic::GameLogic(QObject *pParent) : QObject(pParent)
+GameLogic::GameLogic(QObject *pParent) : QObject(pParent), m_nTargetNumber(0)
 {
-    generateTargetNumber();
-
     m_pTimer = new QTimer(this);
     connect(m_pTimer, SIGNAL(timeout()), this, SLOT(editModel()));
     m_pTimer->setInterval(700);
@@ -22,9 +20,15 @@ GameModel* GameLogic::gameModel() const
 void GameLogic::setGameModel(GameModel *pGameModel)
 {
     m_pGameModel = pGameModel;
+    onGameModelChanged();
+}
+void GameLogic::onGameModelChanged()
+{
+    generateTargetNumber();
+    emit targetNumberChanged();
 }
 
-void GameLogic::RandomNumberVisible()
+void GameLogic::NewRandomNumberVisible()
 {
     srand(time(0));
 
@@ -41,6 +45,10 @@ void GameLogic::RandomNumberVisible()
 
     for(; it != end; ++it)
     {
+        //QColor color = (*it).color();
+        //QModelIndex modelIndex = m_pGameModel->index(nIndex);
+        //m_pGameModel->setData(modelIndex, color, GameModel::ColorRole);
+
         // find random index
         if((*it).visible() == false && nRandomIndex == nIndex)
         {
@@ -66,13 +74,20 @@ void GameLogic::RandomNumberVisible()
     // find to left of random index
     if(bVisible == false)
     {
+        //nIndex = 0;
         it = m_pGameModel->begin();
         for(; it != end; ++it)
+        {
+            //QColor color = (*it).color();
+            //QModelIndex modelIndex = m_pGameModel->index(nIndex);
+            //m_pGameModel->setData(modelIndex, color, GameModel::ColorRole);
+
             if((*it).visible() == false)
             {
                 *it = Number(nRandomNumber, true);
                 break;
             }
+        }
     }
 
     qDebug() << nRandomIndex;
@@ -113,7 +128,7 @@ void GameLogic::editModel()
     }
     m_pGameModel->beginResetModel();
 
-    RandomNumberVisible();
+    NewRandomNumberVisible();
 
     m_pGameModel->endResetModel();
 }
@@ -122,6 +137,7 @@ void GameLogic::startGame()
 {
     if(m_pGameModel->empty())
         m_pGameModel->fillModel();
+
     m_pTimer->start();
     emit gameStarted();
 }
@@ -136,6 +152,7 @@ void GameLogic::pauseGame()
     m_pTimer->stop();
     emit gamePaused();
 }
+
 void GameLogic::setTargetNumber(int nNum)
 {
     m_nTargetNumber = nNum;
@@ -153,12 +170,15 @@ int GameLogic::userSelectedNumber() const
 {
     return m_nUserSelectedNumber;
 }
-void GameLogic::reactionOnUserAction(int nUserSelectedNumber, int nIndex)
+
+void GameLogic::reactionOnUserAction(int nUserSelectedNumber, int nIndex, QString strColor)
 {
     qDebug() << "grid view index = " << nIndex;
     QModelIndex modelIndex = m_pGameModel->index(nIndex,0);
 
     setUserSelectedNumber(nUserSelectedNumber);
+
+    m_pGameModel->setData(modelIndex, strColor, GameModel::ColorRole);
 
     if(testOnEquality())
     {
@@ -166,12 +186,13 @@ void GameLogic::reactionOnUserAction(int nUserSelectedNumber, int nIndex)
         if(modelIndex.isValid())
         {
             //qDebug() << "index is valid";
-            m_pGameModel->setData(modelIndex, "green", GameModel::ColorRole);
 
             int nNewRandomValue = generateFieldNumber();
             m_pGameModel->setNewRandomValue(nNewRandomValue);
 
             m_pGameModel->setData(modelIndex, nUserSelectedNumber, GameModel::ValueRole);
+
+            //m_pGameModel->setData(modelIndex, "green", GameModel::ColorRole);
         }
         emit targetNumberChanged();
     }
@@ -185,13 +206,19 @@ bool GameLogic::testOnEquality() const
 bool GameLogic::generateTargetNumber()
 {
     srand(time(0));
-    m_nTargetNumber = 1 + rand() % 8;
+    int nLowRandomNumber = m_pGameModel->lowRandomNumber();
+    int nHighRandomNumber = m_pGameModel->highRandomNumber();
+
+    m_nTargetNumber = nLowRandomNumber + rand() % nHighRandomNumber;
     return m_nTargetNumber;
 }
 bool GameLogic::generateFieldNumber()
 {
     srand(time(0));
-    int nFieldNumber = 1 + rand() % 8;
+    int nLowRandomNumber = m_pGameModel->lowRandomNumber();
+    int nHighRandomNumber = m_pGameModel->highRandomNumber();
+
+    int nFieldNumber = nLowRandomNumber + rand() % nHighRandomNumber;
     return nFieldNumber;
 }
 

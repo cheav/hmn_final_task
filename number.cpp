@@ -1,7 +1,7 @@
 #include "number.h"
 
 Number::Number(int nNum, bool bVisible)
-    : m_nNumber(nNum), m_bVisible(bVisible), m_Color(Qt::white)
+    : m_nNumber(nNum), m_bVisible(bVisible), m_Color("white")
 {
     //
 }
@@ -14,7 +14,7 @@ bool Number::visible() const
 {
     return m_bVisible;
 }
-QColor Number::color() const
+QString Number::color() const
 {
     return m_Color;
 }
@@ -27,7 +27,7 @@ void Number::setVisible(bool bVisible)
 {
     m_bVisible = bVisible;
 }
-void Number::setColor(QColor& color)
+void Number::setColor(QString &color)
 {
     m_Color = color;
 }

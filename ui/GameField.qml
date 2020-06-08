@@ -22,6 +22,7 @@ GroupBox
             nButtonIndex: numberIndex
             buttonVisible: numberVisible
             text: numberValue.toString()
+            color: numberColor
 
             Component.onCompleted: {
                 //console.log("button number completed")
