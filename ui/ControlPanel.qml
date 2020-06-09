@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 
 GroupBox
 {
+    property alias startGameButtonEnabled: startGame.enabled
     Layout.fillWidth: true
 
     GridLayout

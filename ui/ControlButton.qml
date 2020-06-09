@@ -35,7 +35,7 @@ Rectangle
         onReleased: root.color = oldColor
 
         onClicked: root.clicked()
-    } // MouseArea
+    }
 
     Text
     {
@@ -45,4 +45,4 @@ Rectangle
         text: parent.text
     }
 
-} // Rectangle
+}

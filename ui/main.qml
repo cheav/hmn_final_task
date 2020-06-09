@@ -52,6 +52,11 @@ Window
         {
             root.title = qsTr("Game Find Sum: GAME OVER !")
         }
+        onGameWin:
+        {
+            root.title = qsTr("Game Find Sum: GAME WIN !")
+            controlPanel.startGameButtonEnabled = true
+        }
     }
 
     GridLayout
@@ -85,6 +90,7 @@ Window
 
         ControlPanel
         {
+            id: controlPanel
             Layout.columnSpan: 2
         }
     }

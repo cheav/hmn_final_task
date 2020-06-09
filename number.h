@@ -17,7 +17,7 @@ public:
 private:
     int m_nValue;
     bool m_bVisible;
-    QString m_Color;
+    QString m_strColor;
 };
 
 #endif // NUMBER_H

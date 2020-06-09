@@ -7,7 +7,8 @@
 #include <QTimer>
 #include <QDebug>
 
-GameLogic::GameLogic(QObject *pParent) : QObject(pParent), m_nTargetNumber(0)
+GameLogic::GameLogic(QObject *pParent) : QObject(pParent), m_nTargetNumber(0),
+    m_nGameWinCondition(2)
 {
     m_pTimer = new QTimer(this);
     connect(m_pTimer, SIGNAL(timeout()), this, SLOT(editModel()));
@@ -39,8 +40,8 @@ void GameLogic::NewRandomNumberVisible()
     int nIndex = 0;
     bool bVisible = false;
 
-    model_iterator it = m_pGameModel->begin();
-    model_iterator end = m_pGameModel->end();
+    auto it = m_pGameModel->begin();
+    auto end = m_pGameModel->end();
 
     for(; it != end; ++it)
     {
@@ -145,26 +146,19 @@ void GameLogic::setTargetNumber(int nNum)
 {
     m_nTargetNumber = nNum;
 }
-void GameLogic::setUserSelectedNumber(int nNum)
-{
-    m_nUserSelectedNumber = nNum;
-}
-
 int GameLogic::targetNumber() const
 {
     return m_nTargetNumber;
 }
-int GameLogic::userSelectedNumber() const
-{
-    return m_nUserSelectedNumber;
-}
 
 void GameLogic::onUserAction(int nUserSelectedNumber, int nIndex, QString strColor)
 {
+    // Definition of sum of numbers selected by user on game field
+    // and according logic:
+
     if(nUserSelectedNumber >= targetNumber()) return;
 
     QModelIndex modelIndex = m_pGameModel->index(nIndex, 0);
-    setUserSelectedNumber(nUserSelectedNumber);
 
     if(m_UserSelectedNumbers.empty())
     {
@@ -194,33 +188,51 @@ void GameLogic::onUserAction(int nUserSelectedNumber, int nIndex, QString strCol
             generateTargetNumber();
             qDebug() << "sum = " << nSum << " !";
 
+            static int nCount = 0;
+
             if(modelIndex.isValid())
             {
                 // Disappearance of numbers from game field:
 
-                // set not visible new random value by current model index
+                // set new random value (like invisible) by current model index
                 int nNewRandomValue = generateFieldNumber();
                 m_pGameModel->setData(modelIndex, nNewRandomValue, GameModel::ValueRole);
 
-                // set other not visible new random values by their model indexes
+                // set other new random values (like invisibles) by their model indexes
                 auto it = m_UserSelectedNumbers.begin();
                 for(; it != m_UserSelectedNumbers.end(); ++it)
                 {
                     int nNewRandomValue = generateFieldNumber();
                     m_pGameModel->setData((*it).modelIndex, nNewRandomValue, GameModel::ValueRole);
                 }
+                ++ nCount;
             }
-            emit targetNumberChanged();
             m_UserSelectedNumbers.clear();
-        }
-    }
+            emit targetNumberChanged();
+
+            // game win
+            if(nCount == m_nGameWinCondition)
+            {
+                nCount = 0;
+                pauseGame();
+                emit gameWin();
+            }
+            //
+        } // else if(nSum == targetNumber())
+    } // else
 }
 
 bool GameLogic::generateTargetNumber()
 {
     srand(time(0));
-    int nLowRandomNumber = 3 + m_pGameModel->lowRandomNumber();
-    int nHighRandomNumber = 5 + m_pGameModel->highRandomNumber();
+
+    // game field numbers limits:
+    int nMinFieldNumber = m_pGameModel->lowRandomNumber();
+    int nMaxFieldNumber = m_pGameModel->lowRandomNumber() + m_pGameModel->highRandomNumber();
+
+    // formulas for target number limits based on game field numbers limits:
+    int nLowRandomNumber = (nMinFieldNumber + nMaxFieldNumber) / 2;
+    int nHighRandomNumber = 3 * nMaxFieldNumber / 2;
 
     m_nTargetNumber = nLowRandomNumber + rand() % nHighRandomNumber;
     return m_nTargetNumber;

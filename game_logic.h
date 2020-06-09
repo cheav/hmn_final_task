@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QModelIndex>
+#include <QVector>
 #include "number.h"
 
 class GameModel;
@@ -23,11 +24,8 @@ public:
     Q_INVOKABLE void stopGame();
     Q_INVOKABLE void pauseGame();
 
-    void setTargetNumber(int nNum);
-    void setUserSelectedNumber(int nNum);
-
     int targetNumber() const;
-    int userSelectedNumber() const;
+    void setTargetNumber(int nNum);
 
     bool generateTargetNumber();
     bool generateFieldNumber();
@@ -48,11 +46,12 @@ private:
         int value;
         QModelIndex modelIndex;
     };
-
+    // container of user selected numbers on game field:
     QList<SelectedNumber> m_UserSelectedNumbers;
-    int m_nTargetNumber;
-    int m_nUserSelectedNumber;
+    //
     QTimer *m_pTimer;
+    int m_nTargetNumber;
+    int m_nGameWinCondition;
 signals:
     void modelChanged();
     void targetNumberChanged();
@@ -60,6 +59,7 @@ signals:
     void gameStopped();
     void gamePaused();
     void gameOver();
+    void gameWin();
 };
 
 #endif // GAME_LOGIC_H
