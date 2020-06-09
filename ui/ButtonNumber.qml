@@ -21,23 +21,14 @@ Rectangle
     MouseArea
     {
         anchors.fill: parent
-        property color oldColor
-        //
+
         onPressed:
         {
-            oldColor = root.color
-            //root.color = Qt.darker(oldColor)
             root.color = Qt.lighter("blue")
-            gameLogic.reactionOnUserAction(nButtonNumber, nButtonIndex, root.color)
-
-            //text.color = "red"
-            //(game_model.data(gridView.currentIndex)).toString()
+            gameLogic.onUserAction(nButtonNumber, nButtonIndex, root.color)
         }
-        //
-        //onReleased: root.color = Qt.lighter("green") //oldColor
-
         onClicked: root.clicked()
-    } // MouseArea
+    }
 
     Text
     {
@@ -51,4 +42,4 @@ Rectangle
         text: parent.text
     }
 
-} // Rectangle
+}

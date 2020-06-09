@@ -2,6 +2,7 @@
 #define GAME_LOGIC_H
 
 #include <QObject>
+#include <QModelIndex>
 #include "number.h"
 
 class GameModel;
@@ -10,13 +11,13 @@ class QTimer;
 class GameLogic : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(GameModel* gameModel READ gameModel WRITE setGameModel NOTIFY gameModelChanged)
+    Q_PROPERTY(GameModel* model READ model WRITE setModel NOTIFY modelChanged)
     Q_PROPERTY(int targetNumber READ targetNumber WRITE setTargetNumber NOTIFY targetNumberChanged)
 public:
     GameLogic(QObject *pParent = nullptr);
 
-    GameModel* gameModel() const;
-    void setGameModel(GameModel* pGameModel);
+    GameModel* model() const;
+    void setModel(GameModel* pModel);
 
     Q_INVOKABLE void startGame();
     Q_INVOKABLE void stopGame();
@@ -28,8 +29,6 @@ public:
     int targetNumber() const;
     int userSelectedNumber() const;
 
-    Q_INVOKABLE void reactionOnUserAction(int nUserSelectedNumber, int nIndex, QString strColor);
-    bool testOnEquality() const;
     bool generateTargetNumber();
     bool generateFieldNumber();
 
@@ -38,16 +37,24 @@ public:
     void runGameOver();
 public slots:
     void editModel();
-    void onGameModelChanged();
+    void onModelChanged();
+    Q_INVOKABLE void onUserAction(int nUserSelectedNumber, int nIndex, QString strColor);
 private:
     GameModel *m_pGameModel;
-    //
-    //QList<Number> m_UserSelectedNumbers;
+
+    struct SelectedNumber
+    {
+        SelectedNumber(int value, QModelIndex index) : value(value), modelIndex(index) {}
+        int value;
+        QModelIndex modelIndex;
+    };
+
+    QList<SelectedNumber> m_UserSelectedNumbers;
     int m_nTargetNumber;
     int m_nUserSelectedNumber;
     QTimer *m_pTimer;
 signals:
-    void gameModelChanged();
+    void modelChanged();
     void targetNumberChanged();
     void gameStarted();
     void gameStopped();

@@ -1,14 +1,14 @@
 #include "number.h"
 
-Number::Number(int nNum, bool bVisible)
-    : m_nNumber(nNum), m_bVisible(bVisible), m_Color("white")
+Number::Number(int nValue, bool bVisible)
+    : m_nValue(nValue), m_bVisible(bVisible), m_Color("white")
 {
     //
 }
 
-int Number::number() const
+int Number::value() const
 {
-    return m_nNumber;
+    return m_nValue;
 }
 bool Number::visible() const
 {
@@ -19,9 +19,9 @@ QString Number::color() const
     return m_Color;
 }
 
-void Number::setNumber(int nNum)
+void Number::setValue(int nValue)
 {
-    m_nNumber = nNum;
+    m_nValue = nValue;
 }
 void Number::setVisible(bool bVisible)
 {

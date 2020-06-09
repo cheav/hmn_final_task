@@ -9,7 +9,7 @@ using model_iterator = QList<Number>::iterator;
 class GameModel : public QAbstractListModel
 {
     Q_OBJECT
-    Q_PROPERTY(GameModel* gameModel READ gameModel WRITE setGameModel NOTIFY gameModelChanged)
+    Q_PROPERTY(GameModel* model READ model WRITE setModel NOTIFY modelChanged)
     Q_PROPERTY(int rows READ rows WRITE setRows NOTIFY rowsChanged)
     Q_PROPERTY(int columns READ columns WRITE setColumns NOTIFY columnsChanged)
 public:
@@ -23,11 +23,11 @@ public:
     Q_ENUM(NumberRole)
 
     GameModel(int nRows = 1, int nColumns = 1,
-              int nLowRandomNumber = 1, int nHighRandomNumber = 8,
+              int nLowRandomNumber = 1, int nHighRandomNumber = 9,
               QObject *pParent = nullptr);
 public:
-    GameModel* gameModel() const;
-    void setGameModel(GameModel* pGameModel);
+    GameModel* model() const;
+    void setModel(GameModel* pModel);
 
     void beginResetModel();
     void endResetModel();
@@ -40,9 +40,6 @@ public:
 
     int highRandomNumber() const;
     void setHighRandomNumber(int highRandomNum);
-
-    int newRandomValue() const;
-    void setNewRandomValue(int nNewRandomValue);
 public slots:
     void fillModel();
     void clearModel();
@@ -78,7 +75,7 @@ private:
     int m_nLowRandomNumber;
     int m_nHighRandomNumber;
 signals:
-    void gameModelChanged();
+    void modelChanged();
     void rowsChanged();
     void columnsChanged();
 };

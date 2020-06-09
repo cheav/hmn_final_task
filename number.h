@@ -6,16 +6,16 @@
 class Number
 {
 public:
-    Number(int nNum = 0, bool bVisible = false);
-    int number() const;
+    Number(int nValue = 0, bool bVisible = false);
+    int value() const;
     bool visible() const;
     QString color() const;
 
-    void setNumber(int nNum);
+    void setValue(int nValue);
     void setVisible(bool bVisible);
     void setColor(QString& color);
 private:
-    int m_nNumber;
+    int m_nValue;
     bool m_bVisible;
     QString m_Color;
 };

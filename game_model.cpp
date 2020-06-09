@@ -8,13 +8,13 @@ GameModel::GameModel(int nRows, int nColumns, int nLowRandomNumber, int nHighRan
 {
 }
 //-------------------------------------------------------------------------------------------------
-GameModel* GameModel::gameModel() const
+GameModel* GameModel::model() const
 {
     return m_pGameModel;
 }
-void GameModel::setGameModel(GameModel* pGameModel)
+void GameModel::setModel(GameModel* pModel)
 {
-    m_pGameModel = pGameModel;
+    m_pGameModel = pModel;
 }
 
 void GameModel::beginResetModel()
@@ -53,15 +53,6 @@ int GameModel::highRandomNumber() const
 void GameModel::setHighRandomNumber(int highRandomNum)
 {
     m_nHighRandomNumber = highRandomNum;
-}
-
-int GameModel::newRandomValue() const
-{
-    return m_nNewRandomValue;
-}
-void GameModel::setNewRandomValue(int nNewRandomValue)
-{
-    m_nNewRandomValue = nNewRandomValue;
 }
 
 void GameModel::fillModel()
@@ -130,7 +121,7 @@ QVariant GameModel::data(const QModelIndex &rcIndex, int nRole) const
     if (rcIndex.row() < rowCount())
         switch (nRole)
         {
-        case ValueRole: return m_Numbers.at(rcIndex.row()).number();
+        case ValueRole: return m_Numbers.at(rcIndex.row()).value();
         case VisibleRole: return m_Numbers.at(rcIndex.row()).visible();
         case ColorRole: return m_Numbers.at(rcIndex.row()).color();
         case IndexRole: return rcIndex.row();
@@ -146,7 +137,7 @@ bool GameModel::setData(const QModelIndex &rcIndex, const QVariant &rValue, int 
     {
     case ValueRole:
     {
-        int nValue = newRandomValue(); // before value must set in game logic
+        int nValue = rValue.toInt();
         Number number(nValue, false);
         set(rcIndex.row(), number);
         result = true;

@@ -27,7 +27,7 @@ Window
     GameLogic
     {
         id: gameLogic
-        gameModel: gameModel.gameModel
+        model: gameModel.model
 
         onTargetNumberChanged:
         {
@@ -72,6 +72,7 @@ Window
         Label
         {
             id: targetLabel
+            width: 30
             color: "blue"
             font
             {
@@ -79,7 +80,7 @@ Window
                 pointSize: 20
                 bold: true
             }
-            text: gameLogic.targetNumber.toString()
+            text: "0"
         }
 
         ControlPanel

@@ -13,19 +13,18 @@ GameLogic::GameLogic(QObject *pParent) : QObject(pParent), m_nTargetNumber(0)
     connect(m_pTimer, SIGNAL(timeout()), this, SLOT(editModel()));
     m_pTimer->setInterval(700);
 }
-GameModel* GameLogic::gameModel() const
+GameModel* GameLogic::model() const
 {
     return m_pGameModel;
 }
-void GameLogic::setGameModel(GameModel *pGameModel)
+void GameLogic::setModel(GameModel *pModel)
 {
-    m_pGameModel = pGameModel;
-    onGameModelChanged();
+    m_pGameModel = pModel;
+    onModelChanged();
 }
-void GameLogic::onGameModelChanged()
+void GameLogic::onModelChanged()
 {
     generateTargetNumber();
-    emit targetNumberChanged();
 }
 
 void GameLogic::NewRandomNumberVisible()
@@ -45,10 +44,6 @@ void GameLogic::NewRandomNumberVisible()
 
     for(; it != end; ++it)
     {
-        //QColor color = (*it).color();
-        //QModelIndex modelIndex = m_pGameModel->index(nIndex);
-        //m_pGameModel->setData(modelIndex, color, GameModel::ColorRole);
-
         // find random index
         if((*it).visible() == false && nRandomIndex == nIndex)
         {
@@ -74,20 +69,13 @@ void GameLogic::NewRandomNumberVisible()
     // find to left of random index
     if(bVisible == false)
     {
-        //nIndex = 0;
         it = m_pGameModel->begin();
         for(; it != end; ++it)
-        {
-            //QColor color = (*it).color();
-            //QModelIndex modelIndex = m_pGameModel->index(nIndex);
-            //m_pGameModel->setData(modelIndex, color, GameModel::ColorRole);
-
             if((*it).visible() == false)
             {
                 *it = Number(nRandomNumber, true);
                 break;
             }
-        }
     }
 
     qDebug() << nRandomIndex;
@@ -171,43 +159,68 @@ int GameLogic::userSelectedNumber() const
     return m_nUserSelectedNumber;
 }
 
-void GameLogic::reactionOnUserAction(int nUserSelectedNumber, int nIndex, QString strColor)
+void GameLogic::onUserAction(int nUserSelectedNumber, int nIndex, QString strColor)
 {
-    qDebug() << "grid view index = " << nIndex;
-    QModelIndex modelIndex = m_pGameModel->index(nIndex,0);
+    if(nUserSelectedNumber >= targetNumber()) return;
 
+    QModelIndex modelIndex = m_pGameModel->index(nIndex, 0);
     setUserSelectedNumber(nUserSelectedNumber);
 
-    m_pGameModel->setData(modelIndex, strColor, GameModel::ColorRole);
-
-    if(testOnEquality())
+    if(m_UserSelectedNumbers.empty())
     {
-        generateTargetNumber();
-        if(modelIndex.isValid())
+        m_UserSelectedNumbers.append(SelectedNumber(nUserSelectedNumber, modelIndex));
+        m_pGameModel->setData(modelIndex, strColor, GameModel::ColorRole);
+        qDebug() << nUserSelectedNumber;
+    }
+    else
+    {
+        int nSum = 0;
+        auto it = m_UserSelectedNumbers.begin();
+        for(; it != m_UserSelectedNumbers.end(); ++it)
         {
-            //qDebug() << "index is valid";
-
-            int nNewRandomValue = generateFieldNumber();
-            m_pGameModel->setNewRandomValue(nNewRandomValue);
-
-            m_pGameModel->setData(modelIndex, nUserSelectedNumber, GameModel::ValueRole);
-
-            //m_pGameModel->setData(modelIndex, "green", GameModel::ColorRole);
+            int nValue = (*it).value;
+            nSum += nValue;
         }
-        emit targetNumberChanged();
+        nSum += nUserSelectedNumber;
+
+        if(nSum < targetNumber())
+        {
+            m_UserSelectedNumbers.append(SelectedNumber(nUserSelectedNumber, modelIndex));
+            m_pGameModel->setData(modelIndex, strColor, GameModel::ColorRole);
+            qDebug() << nUserSelectedNumber;
+        }
+        else if(nSum == targetNumber())
+        {
+            generateTargetNumber();
+            qDebug() << "sum = " << nSum << " !";
+
+            if(modelIndex.isValid())
+            {
+                // Disappearance of numbers from game field:
+
+                // set not visible new random value by current model index
+                int nNewRandomValue = generateFieldNumber();
+                m_pGameModel->setData(modelIndex, nNewRandomValue, GameModel::ValueRole);
+
+                // set other not visible new random values by their model indexes
+                auto it = m_UserSelectedNumbers.begin();
+                for(; it != m_UserSelectedNumbers.end(); ++it)
+                {
+                    int nNewRandomValue = generateFieldNumber();
+                    m_pGameModel->setData((*it).modelIndex, nNewRandomValue, GameModel::ValueRole);
+                }
+            }
+            emit targetNumberChanged();
+            m_UserSelectedNumbers.clear();
+        }
     }
 }
-bool GameLogic::testOnEquality() const
-{
-    if(m_nUserSelectedNumber == m_nTargetNumber)
-        return true;
-    return false;
-}
+
 bool GameLogic::generateTargetNumber()
 {
     srand(time(0));
-    int nLowRandomNumber = m_pGameModel->lowRandomNumber();
-    int nHighRandomNumber = m_pGameModel->highRandomNumber();
+    int nLowRandomNumber = 3 + m_pGameModel->lowRandomNumber();
+    int nHighRandomNumber = 5 + m_pGameModel->highRandomNumber();
 
     m_nTargetNumber = nLowRandomNumber + rand() % nHighRandomNumber;
     return m_nTargetNumber;

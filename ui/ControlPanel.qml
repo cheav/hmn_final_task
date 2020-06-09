@@ -20,7 +20,11 @@ GroupBox
             Layout.fillWidth: true
             onClicked:
             {
+                targetLabel.text = gameLogic.targetNumber.toString()
                 gameLogic.startGame()
+                enabled = false
+                stopGame.enabled = true
+                pauseGame.enabled = true
             }
         }
         ControlButton
@@ -31,6 +35,9 @@ GroupBox
             onClicked:
             {
                 gameLogic.stopGame()
+                //targetLabel.text = "0"
+                enabled = false
+                startGame.enabled = true
             }
         }
         ControlButton
@@ -41,6 +48,8 @@ GroupBox
             onClicked:
             {
                 gameLogic.pauseGame()
+                enabled = false
+                startGame.enabled = true
             }
 
         }
