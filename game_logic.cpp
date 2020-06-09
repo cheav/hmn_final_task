@@ -30,12 +30,9 @@ void GameLogic::onModelChanged()
 
 void GameLogic::NewRandomNumberVisible()
 {
+    int nRandomNumber = generateFieldNumber();
+
     srand(time(0));
-
-    int nLowRandomNumber = m_pGameModel->lowRandomNumber();
-    int nHighRandomNumber = m_pGameModel->highRandomNumber();
-
-    int nRandomNumber = nLowRandomNumber + rand() % nHighRandomNumber;
     int nRandomIndex = rand() % (m_pGameModel->size() - 1);
     int nIndex = 0;
     bool bVisible = false;
@@ -222,7 +219,7 @@ void GameLogic::onUserAction(int nUserSelectedNumber, int nIndex, QString strCol
     } // else
 }
 
-bool GameLogic::generateTargetNumber()
+int GameLogic::generateTargetNumber()
 {
     srand(time(0));
 
@@ -237,7 +234,7 @@ bool GameLogic::generateTargetNumber()
     m_nTargetNumber = nLowRandomNumber + rand() % nHighRandomNumber;
     return m_nTargetNumber;
 }
-bool GameLogic::generateFieldNumber()
+int GameLogic::generateFieldNumber()
 {
     srand(time(0));
     int nLowRandomNumber = m_pGameModel->lowRandomNumber();

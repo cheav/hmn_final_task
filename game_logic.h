@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QModelIndex>
-#include <QVector>
 #include "number.h"
 
 class GameModel;
@@ -27,8 +26,8 @@ public:
     int targetNumber() const;
     void setTargetNumber(int nNum);
 
-    bool generateTargetNumber();
-    bool generateFieldNumber();
+    int generateTargetNumber();
+    int generateFieldNumber();
 
     void NewRandomNumberVisible();
     bool GameOverCondition();
