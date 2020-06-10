@@ -28,12 +28,15 @@ void GameLogic::onModelChanged()
     generateTargetNumber();
 }
 
-void GameLogic::NewRandomNumberVisible()
+void GameLogic::RandomNumberDisplay_on_game_field()
 {
     int nRandomNumber = generateFieldNumber();
 
+    // generator random index:
     srand(time(0));
-    int nRandomIndex = rand() % (m_pGameModel->size() - 1);
+    int nLastIndex = m_pGameModel->size() - 1;
+    int nRandomIndex = rand() % nLastIndex;
+
     int nIndex = 0;
     bool bVisible = false;
 
@@ -114,7 +117,7 @@ void GameLogic::editModel()
     }
     m_pGameModel->beginResetModel();
 
-    NewRandomNumberVisible();
+    RandomNumberDisplay_on_game_field();
 
     m_pGameModel->endResetModel();
 }

@@ -36,7 +36,7 @@ GroupBox
             onClicked:
             {
                 gameLogic.stopGame()
-                //targetLabel.text = "0"
+                targetLabel.text = "0"
                 enabled = false
                 startGame.enabled = true
             }

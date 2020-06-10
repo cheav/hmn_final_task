@@ -29,7 +29,7 @@ public:
     int generateTargetNumber();
     int generateFieldNumber();
 
-    void NewRandomNumberVisible();
+    void RandomNumberDisplay_on_game_field();
     bool GameOverCondition();
     void runGameOver();
 public slots:

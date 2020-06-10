@@ -16,13 +16,13 @@ public:
     enum NumberRole
     {
         ValueRole = Qt::DisplayRole,
-        VisibleRole = Qt::UserRole + 1,
-        ColorRole = Qt::UserRole + 2,
-        IndexRole = Qt::UserRole + 3,
+        VisibleRole = Qt::UserRole,
+        ColorRole,
+        IndexRole,
     };
     Q_ENUM(NumberRole)
 
-    GameModel(int nRows = 1, int nColumns = 1,
+    GameModel(int nRows = 6, int nColumns = 10,
               int nLowRandomNumber = 1, int nHighRandomNumber = 9,
               QObject *pParent = nullptr);
 public:
@@ -43,10 +43,12 @@ public:
 public slots:
     void fillModel();
     void clearModel();
+    void onRowsChanged();
+    void onColumnsChanged();
 public:
     int rowCount(const QModelIndex & = QModelIndex()) const;
-    Q_INVOKABLE QVariant data(const QModelIndex &rcIndex, int nRole = ValueRole) const;
-    Q_INVOKABLE bool setData(const QModelIndex &rcIndex, const QVariant &rValue, int nRole = ValueRole);
+    QVariant data(const QModelIndex &rcIndex, int nRole = ValueRole) const;
+    bool setData(const QModelIndex &rcIndex, const QVariant &rValue, int nRole = ValueRole);
     QModelIndex index(int nRow, int nColumn = 0, const QModelIndex &parent = QModelIndex()) const;
 
     Number& getItem(const QModelIndex &rcIndex) const;
@@ -69,7 +71,6 @@ private:
     GameModel *m_pGameModel;
     QList<Number> m_Numbers;
 
-    int m_nNewRandomValue;
     int m_nRows;
     int m_nColumns;
     int m_nLowRandomNumber;

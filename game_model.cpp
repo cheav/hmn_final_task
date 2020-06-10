@@ -6,6 +6,9 @@ GameModel::GameModel(int nRows, int nColumns, int nLowRandomNumber, int nHighRan
     : QAbstractListModel(pParent), m_pGameModel(this), m_nRows(nRows), m_nColumns(nColumns),
       m_nLowRandomNumber(nLowRandomNumber), m_nHighRandomNumber(nHighRandomNumber)
 {
+    fillModel();
+    connect(this, SIGNAL(rowsChanged()), this, SLOT(fillModel()));
+    connect(this, SIGNAL(columnsChanged()), this, SLOT(fillModel()));
 }
 //-------------------------------------------------------------------------------------------------
 GameModel* GameModel::model() const
@@ -78,6 +81,14 @@ void GameModel::clearModel()
     m_Numbers.clear();
     endResetModel();
 }
+void GameModel::onRowsChanged()
+{
+    fillModel();
+}
+void GameModel::onColumnsChanged()
+{
+    fillModel();
+}
 //-------------------------------------------------------------------------------------------------
 int GameModel::rowCount(const QModelIndex &) const
 {
@@ -91,30 +102,26 @@ int GameModel::size() const
 {
     return m_Numbers.count();
 }
+
 int GameModel::rows() const
 {
     return m_nRows;
 }
-int GameModel::columns() const
-{
-    return m_nColumns;
-}
-
 void GameModel::setRows(int nRows)
 {
     m_nRows = nRows;
     emit rowsChanged();
+}
 
-    fillModel();
+int GameModel::columns() const
+{
+    return m_nColumns;
 }
 void GameModel::setColumns(int nColumns)
 {
     m_nColumns = nColumns;
     emit columnsChanged();
-
-    fillModel();
 }
-
 
 QVariant GameModel::data(const QModelIndex &rcIndex, int nRole) const
 {

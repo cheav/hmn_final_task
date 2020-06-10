@@ -20,8 +20,6 @@ Window
     GameModel
     {
         id: gameModel
-        rows: 6
-        columns: 10
     }
 
     GameLogic
