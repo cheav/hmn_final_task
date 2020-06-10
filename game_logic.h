@@ -27,15 +27,15 @@ public:
     void setTargetNumber(int nNum);
 
     int generateTargetNumber();
-    int generateFieldNumber();
-
-    void RandomNumberDisplay_on_game_field();
-    bool GameOverCondition();
-    void runGameOver();
+    int generateFieldNumber();  
 public slots:
-    void editModel();
+    void displayRandomNumber();
     void onModelChanged();
     Q_INVOKABLE void onUserAction(int nUserSelectedNumber, int nIndex, QString strColor);
+private:
+    void findRandomNumber_in_model();
+    bool GameOverCondition();
+    void runGameOver();
 private:
     GameModel *m_pGameModel;
 

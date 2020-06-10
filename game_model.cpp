@@ -100,7 +100,7 @@ bool GameModel::empty() const
 }
 int GameModel::size() const
 {
-    return m_Numbers.count();
+    return m_Numbers.size();
 }
 
 int GameModel::rows() const

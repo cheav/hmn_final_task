@@ -13,7 +13,7 @@ public:
 
     void setValue(int nValue);
     void setVisible(bool bVisible);
-    void setColor(QString& color);
+    void setColor(const QString& color);
 private:
     int m_nValue;
     bool m_bVisible;

@@ -27,7 +27,7 @@ void Number::setVisible(bool bVisible)
 {
     m_bVisible = bVisible;
 }
-void Number::setColor(QString &color)
+void Number::setColor(const QString &color)
 {
     m_strColor = color;
 }
