@@ -50,9 +50,7 @@ void GameLogic::findRandomNumber_in_model()
         {
             bFound_invisible_number = true;
             setFieldButtonProperties(it, strButtonColor);
-            //(*it).setVisible(true);
-            //(*it).setColor(strButtonColor);
-            qDebug() << "target";
+            //qDebug() << "target";
             break;
         }
         // find to right of random index
@@ -65,9 +63,7 @@ void GameLogic::findRandomNumber_in_model()
                 {
                     bFound_invisible_number = true;
                     setFieldButtonProperties(it, strButtonColor);
-                    //(*it).setVisible(true);
-                    //(*it).setColor(strButtonColor);
-                    qDebug() << "right";
+                    //qDebug() << "right";
                     break;
                 }
             break;
@@ -81,9 +77,7 @@ void GameLogic::findRandomNumber_in_model()
             if((*it).visible() == false)
             {
                 setFieldButtonProperties(it, strButtonColor);
-                //(*it).setVisible(true);
-                //(*it).setColor(strButtonColor);
-                qDebug() << "left";
+                //qDebug() << "left";
                 break;
             }
     }
@@ -189,7 +183,7 @@ int GameLogic::targetNumber() const
     return m_nTargetNumber;
 }
 
-void GameLogic::onUserAction(int nUserSelectedNumber, int nIndex, QString strColor)
+void GameLogic::onUserAction(int nUserSelectedNumber, int nIndex, const QString& strColor)
 {
     // Calculation of sum of numbers selected by user on game field
     // and according logic:
@@ -223,29 +217,30 @@ void GameLogic::onUserAction(int nUserSelectedNumber, int nIndex, QString strCol
         }
         else if(nSum == targetNumber())
         {
-            generateTargetNumber();
             qDebug() << "sum = " << nSum << " !";
 
             if(modelIndex.isValid())
             {
                 // Disappearance of numbers from game field:
 
-                // set new random value (like invisible) by current model index
+                // set new random value (like invisible) by current selected model index
                 int nNewRandomValue = generateFieldNumber();
                 m_pGameModel->setData(modelIndex, nNewRandomValue, GameModel::ValueRole);
 
-                // set other new random values (like invisibles) by their model indexes
+                // set remaining new random values (like invisibles) by selected model indexes
                 auto it = m_UserSelectedNumbers.begin();
                 for(; it != m_UserSelectedNumbers.end(); ++it)
                 {
                     int nNewRandomValue = generateFieldNumber();
                     m_pGameModel->setData((*it).modelIndex, nNewRandomValue, GameModel::ValueRole);
                 }
-                //
+
                 incrementUserHitCount();
+                m_UserSelectedNumbers.clear();
+
+                generateTargetNumber();
+                emit targetNumberChanged();
             }
-            m_UserSelectedNumbers.clear();
-            emit targetNumberChanged();
 
             // game win
             if(m_nGameWinCondition == userHitCount())
