@@ -34,7 +34,7 @@ public slots:
     Q_INVOKABLE void onUserAction(int nUserSelectedNumber, int nIndex, const QString &strColor);
 private:
     void findRandomNumber_in_model();
-    void setFieldButtonProperties(model_iterator& it, const QString& strButtonColor);
+    void changeGameModel(model_iterator& it, const QString& strButtonColor);
     bool GameOverCondition();
     void runGameOver();
     //

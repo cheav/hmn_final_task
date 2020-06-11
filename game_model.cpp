@@ -4,7 +4,8 @@
 GameModel::GameModel(int nRows, int nColumns, int nLowRandomNumber, int nHighRandomNumber,
                      QObject *pParent)
     : QAbstractListModel(pParent), m_pGameModel(this), m_nRows(nRows), m_nColumns(nColumns),
-      m_nLowRandomNumber(nLowRandomNumber), m_nHighRandomNumber(nHighRandomNumber)
+      m_nLowRandomNumber(nLowRandomNumber), m_nHighRandomNumber(nHighRandomNumber),
+      m_nVisibleButtonsCount(0)
 {
     srand(time(0));
     fillModel();
@@ -57,6 +58,23 @@ int GameModel::highRandomNumber() const
 void GameModel::setHighRandomNumber(int highRandomNum)
 {
     m_nHighRandomNumber = highRandomNum;
+}
+
+int GameModel::visibleButtonsCount() const
+{
+    return m_nVisibleButtonsCount;
+}
+void GameModel::incrementVisibleButtonsCount()
+{
+    ++ m_nVisibleButtonsCount;
+}
+void GameModel::decrementVisibleButtonsCount()
+{
+    -- m_nVisibleButtonsCount;
+}
+void GameModel::resetVisibleButtonsCount()
+{
+    m_nVisibleButtonsCount = 0;
 }
 
 void GameModel::fillModel()

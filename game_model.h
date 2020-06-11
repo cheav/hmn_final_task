@@ -40,6 +40,11 @@ public:
 
     int highRandomNumber() const;
     void setHighRandomNumber(int highRandomNum);
+
+    int visibleButtonsCount() const;
+    void incrementVisibleButtonsCount();
+    void decrementVisibleButtonsCount();
+    void resetVisibleButtonsCount();
 public slots:
     void fillModel();
     void clearModel();
@@ -75,6 +80,7 @@ private:
     int m_nColumns;
     int m_nLowRandomNumber;
     int m_nHighRandomNumber;
+    int m_nVisibleButtonsCount;
 signals:
     void modelChanged();
     void rowsChanged();

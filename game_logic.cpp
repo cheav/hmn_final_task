@@ -49,7 +49,7 @@ void GameLogic::findRandomNumber_in_model()
         if((*it).visible() == false && nRandomIndex == nIndex)
         {
             bFound_invisible_number = true;
-            setFieldButtonProperties(it, strButtonColor);
+            changeGameModel(it, strButtonColor);
             //qDebug() << "target";
             break;
         }
@@ -62,7 +62,7 @@ void GameLogic::findRandomNumber_in_model()
                 if((*it).visible() == false)
                 {
                     bFound_invisible_number = true;
-                    setFieldButtonProperties(it, strButtonColor);
+                    changeGameModel(it, strButtonColor);
                     //qDebug() << "right";
                     break;
                 }
@@ -76,7 +76,7 @@ void GameLogic::findRandomNumber_in_model()
         for(; it != it_after_random_index_it; ++it)
             if((*it).visible() == false)
             {
-                setFieldButtonProperties(it, strButtonColor);
+                changeGameModel(it, strButtonColor);
                 //qDebug() << "left";
                 break;
             }
@@ -84,30 +84,20 @@ void GameLogic::findRandomNumber_in_model()
 
     //qDebug() << nRandomIndex;
 }
-void GameLogic::setFieldButtonProperties(model_iterator& it, const QString& strButtonColor)
+void GameLogic::changeGameModel(model_iterator& it, const QString& strButtonColor)
 {
     (*it).setVisible(true);
     (*it).setColor(strButtonColor);
+    m_pGameModel->incrementVisibleButtonsCount();
 }
 
 bool GameLogic::GameOverCondition()
 {
-    bool bGameFieldFull = false;
-
-    int nCount = 0;
-    auto it = m_pGameModel->begin();
-    auto end = m_pGameModel->end();
-    for(; it != end; ++it)
-        if((*it).visible() == true)
-            ++nCount;
-
-    int nGameOverCondition = 2 * m_pGameModel->size();
-    nGameOverCondition /= 3;
-
-    if(nCount == nGameOverCondition)
-        bGameFieldFull = true;
-
-    return bGameFieldFull;
+    int nGameOverCondition = 2 * m_pGameModel->size() / 3;
+    //qDebug() << "buttons count = " << m_pGameModel->visibleButtonsCount();
+    if(m_pGameModel->visibleButtonsCount() > nGameOverCondition)
+        return true;
+    return false;
 }
 void GameLogic::runGameOver()
 {
@@ -164,6 +154,7 @@ void GameLogic::stopGame()
 
     m_UserSelectedNumbers.clear();
     m_pGameModel->clearModel();
+    m_pGameModel->resetVisibleButtonsCount();
     resetUserHitCount();
 
     emit gameStopped();
@@ -226,6 +217,7 @@ void GameLogic::onUserAction(int nUserSelectedNumber, int nIndex, const QString&
                 // set new random value (like invisible) by current selected model index
                 int nNewRandomValue = generateFieldNumber();
                 m_pGameModel->setData(modelIndex, nNewRandomValue, GameModel::ValueRole);
+                m_pGameModel->decrementVisibleButtonsCount();
 
                 // set remaining new random values (like invisibles) by selected model indexes
                 auto it = m_UserSelectedNumbers.begin();
@@ -233,6 +225,7 @@ void GameLogic::onUserAction(int nUserSelectedNumber, int nIndex, const QString&
                 {
                     int nNewRandomValue = generateFieldNumber();
                     m_pGameModel->setData((*it).modelIndex, nNewRandomValue, GameModel::ValueRole);
+                    m_pGameModel->decrementVisibleButtonsCount();
                 }
 
                 incrementUserHitCount();
