@@ -6,6 +6,7 @@ GameModel::GameModel(int nRows, int nColumns, int nLowRandomNumber, int nHighRan
     : QAbstractListModel(pParent), m_pGameModel(this), m_nRows(nRows), m_nColumns(nColumns),
       m_nLowRandomNumber(nLowRandomNumber), m_nHighRandomNumber(nHighRandomNumber)
 {
+    srand(time(0));
     fillModel();
     connect(this, SIGNAL(rowsChanged()), this, SLOT(fillModel()));
     connect(this, SIGNAL(columnsChanged()), this, SLOT(fillModel()));
@@ -60,8 +61,6 @@ void GameModel::setHighRandomNumber(int highRandomNum)
 
 void GameModel::fillModel()
 {
-    srand(time(0));
-
     beginResetModel();
 
     m_Numbers.clear();

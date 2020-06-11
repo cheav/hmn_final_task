@@ -4,8 +4,8 @@
 #include <QObject>
 #include <QModelIndex>
 #include "number.h"
+#include "game_model.h"
 
-class GameModel;
 class QTimer;
 
 class GameLogic : public QObject
@@ -34,6 +34,7 @@ public slots:
     Q_INVOKABLE void onUserAction(int nUserSelectedNumber, int nIndex, QString strColor);
 private:
     void findRandomNumber_in_model();
+    void setFieldButtonProperties(model_iterator& it, const QString& strButtonColor);
     bool GameOverCondition();
     void runGameOver();
     //
