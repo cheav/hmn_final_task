@@ -36,6 +36,10 @@ private:
     void findRandomNumber_in_model();
     bool GameOverCondition();
     void runGameOver();
+    //
+    int userHitCount() const;
+    void incrementUserHitCount();
+    void resetUserHitCount();
 private:
     GameModel *m_pGameModel;
 
@@ -51,6 +55,7 @@ private:
     QTimer *m_pTimer;
     int m_nTargetNumber;
     int m_nGameWinCondition;
+    int m_nUserHitCount;
 signals:
     void modelChanged();
     void targetNumberChanged();

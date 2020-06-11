@@ -34,11 +34,13 @@ Window
         onGameStarted:
         {
             gameField.gridViewEnabled = true
+            targetLabel.text = targetNumber.toString()
             root.title = qsTr("Game Find Sum: running")
         }
         onGameStopped:
         {
             gameField.gridViewEnabled = false
+            targetLabel.text = targetNumber.toString()
             root.title = qsTr("Game Find Sum: stopped")
         }
         onGamePaused:
@@ -48,6 +50,7 @@ Window
         }
         onGameOver:
         {
+            targetLabel.text = targetNumber.toString()
             root.title = qsTr("Game Find Sum: GAME OVER !")
         }
         onGameWin:

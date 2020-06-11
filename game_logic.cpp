@@ -8,7 +8,7 @@
 #include <QDebug>
 
 GameLogic::GameLogic(QObject *pParent) : QObject(pParent), m_nTargetNumber(0),
-    m_nGameWinCondition(2)
+    m_nGameWinCondition(2), m_nUserHitCount(0)
 {
     m_pTimer = new QTimer(this);
     connect(m_pTimer, SIGNAL(timeout()), this, SLOT(displayRandomNumber()));
@@ -134,6 +134,20 @@ void GameLogic::runGameOver()
     emit gameOver();
 }
 
+int GameLogic::userHitCount() const
+{
+    return m_nUserHitCount;
+}
+void GameLogic::incrementUserHitCount()
+{
+    ++ m_nUserHitCount;
+}
+void GameLogic::resetUserHitCount()
+{
+    m_nUserHitCount = 0;
+}
+
+
 void GameLogic::displayRandomNumber()
 {
     if(GameOverCondition() == true)
@@ -165,6 +179,8 @@ void GameLogic::stopGame()
 {
     m_pTimer->stop();
     m_pGameModel->clearModel();
+    resetUserHitCount();
+
     emit gameStopped();
 }
 void GameLogic::pauseGame()
@@ -219,8 +235,6 @@ void GameLogic::onUserAction(int nUserSelectedNumber, int nIndex, QString strCol
             generateTargetNumber();
             qDebug() << "sum = " << nSum << " !";
 
-            static int nCount = 0;
-
             if(modelIndex.isValid())
             {
                 // Disappearance of numbers from game field:
@@ -236,15 +250,16 @@ void GameLogic::onUserAction(int nUserSelectedNumber, int nIndex, QString strCol
                     int nNewRandomValue = generateFieldNumber();
                     m_pGameModel->setData((*it).modelIndex, nNewRandomValue, GameModel::ValueRole);
                 }
-                ++ nCount;
+                //
+                incrementUserHitCount();
             }
             m_UserSelectedNumbers.clear();
             emit targetNumberChanged();
 
             // game win
-            if(nCount == m_nGameWinCondition)
+            if(m_nGameWinCondition == userHitCount())
             {
-                nCount = 0;
+                resetUserHitCount();
                 pauseGame();
                 emit gameWin();
             }
