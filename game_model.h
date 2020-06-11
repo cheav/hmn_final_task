@@ -73,6 +73,7 @@ public:
 protected:
     QHash<int, QByteArray> roleNames() const;
 private:
+    QHash<int, QByteArray> m_roles;
     GameModel *m_pGameModel;
     QList<Number> m_Numbers;
 

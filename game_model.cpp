@@ -7,6 +7,11 @@ GameModel::GameModel(int nRows, int nColumns, int nLowRandomNumber, int nHighRan
       m_nLowRandomNumber(nLowRandomNumber), m_nHighRandomNumber(nHighRandomNumber),
       m_nVisibleButtonsCount(0)
 {
+    m_roles[ValueRole] = "numberValue";
+    m_roles[VisibleRole] = "numberVisible";
+    m_roles[ColorRole] = "numberColor";
+    m_roles[IndexRole] = "numberIndex";
+
     srand(time(0));
     fillModel();
     connect(this, SIGNAL(rowsChanged()), this, SLOT(fillModel()));
@@ -185,12 +190,7 @@ Number& GameModel::getItem(const QModelIndex &rcIndex) const
 }
 QHash<int, QByteArray> GameModel::roleNames() const
 {
-    QHash<int, QByteArray> roles;
-    roles[ValueRole] = "numberValue";
-    roles[VisibleRole] = "numberVisible";
-    roles[ColorRole] = "numberColor";
-    roles[IndexRole] = "numberIndex";
-    return roles;
+    return m_roles;
 }
 
 void GameModel::append(Number number)
