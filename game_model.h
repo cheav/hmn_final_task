@@ -12,6 +12,7 @@ class GameModel : public QAbstractListModel
     Q_PROPERTY(GameModel* model READ model WRITE setModel NOTIFY modelChanged)
     Q_PROPERTY(int rows READ rows WRITE setRows NOTIFY rowsChanged)
     Q_PROPERTY(int columns READ columns WRITE setColumns NOTIFY columnsChanged)
+    //Q_PROPERTY(QVariant data READ data WRITE setData NOTIFY dataChanged)
 public:
     enum NumberRole
     {
@@ -59,7 +60,7 @@ public:
     Number& getItem(const QModelIndex &rcIndex) const;
 
     void append(Number number);
-    void set(int nRow, Number number);
+    void set(int nRow, const Number &rNumber);
     void remove(int nRow);
 
     bool empty() const;

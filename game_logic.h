@@ -26,15 +26,14 @@ public:
     int targetNumber() const;
     void setTargetNumber(int nNum);
 
-    int generateTargetNumber();
-    int generateFieldNumber();  
+    Q_INVOKABLE int generateTargetNumber();
+    Q_INVOKABLE int generateFieldNumber();
 public slots:
     void displayRandomNumber();
-    void onModelChanged();
-    Q_INVOKABLE void onUserAction(int nUserSelectedNumber, int nIndex, const QString &strColor);
+    Q_INVOKABLE void onUserAction(int nUserSelectedNumber, int nIndex, const QString &strButtonColor);
 private:
-    void findRandomNumber_in_model();
-    void changeGameModel(model_iterator& it, const QString& strButtonColor);
+    void gameFieldRandomFilling();
+    void editModelItem(model_iterator &it, int nIndex);
     bool GameOverCondition();
     void runGameOver();
     //
@@ -65,6 +64,7 @@ signals:
     void gamePaused();
     void gameOver();
     void gameWin();
+    void dataChanged();
 };
 
 #endif // GAME_LOGIC_H

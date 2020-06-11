@@ -27,6 +27,10 @@ Window
         id: gameLogic
         model: gameModel.model
 
+        onModelChanged:
+        {
+            generateTargetNumber()
+        }
         onTargetNumberChanged:
         {
             targetLabel.text = targetNumber.toString()
@@ -55,6 +59,8 @@ Window
             root.title = qsTr("Game Find Sum: GAME WIN !")
             controlPanel.startGameButtonEnabled = true
         }
+
+        //Component.onCompleted: generateTargetNumber()
     }
 
     GridLayout

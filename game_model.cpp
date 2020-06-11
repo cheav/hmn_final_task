@@ -1,5 +1,5 @@
 #include "game_model.h"
-
+#include <QDebug>
 //--------------------------------------------------------------------------------
 GameModel::GameModel(int nRows, int nColumns, int nLowRandomNumber, int nHighRandomNumber,
                      QObject *pParent)
@@ -84,7 +84,7 @@ void GameModel::resetVisibleButtonsCount()
 
 void GameModel::fillModel()
 {
-    beginResetModel();
+    QAbstractListModel::beginResetModel();
 
     m_Numbers.clear();
 
@@ -95,7 +95,7 @@ void GameModel::fillModel()
             m_Numbers.append(Number(nRandomNumber, false));
         }
 
-    endResetModel();
+    QAbstractListModel::endResetModel();
 }
 void GameModel::clearModel()
 {
@@ -167,20 +167,33 @@ bool GameModel::setData(const QModelIndex &rcIndex, const QVariant &rValue, int 
     case ValueRole:
     {
         int nValue = rValue.toInt();
-        Number number(nValue, false);
-        set(rcIndex.row(), number);
+        m_Numbers[rcIndex.row()].setValue(nValue);
         result = true;
+        emit dataChanged(rcIndex, rcIndex, { ValueRole });
+        break;
+    }
+    case VisibleRole:
+    {
+        bool bVisible = rValue.toBool();
+        m_Numbers[rcIndex.row()].setVisible(bVisible);
+        result = true;
+        emit dataChanged(rcIndex, rcIndex, { VisibleRole });
+        break;
     }
     case ColorRole:
     {
         QString strColor = rValue.toString();
         m_Numbers[rcIndex.row()].setColor(strColor);
         result = true;
+        emit dataChanged(rcIndex, rcIndex, { ColorRole });
+        break;
     }
-    default:{}
+    default: break;
     }
 
-    if (result) emit dataChanged(rcIndex, rcIndex);
+    //qDebug() << "model changed";
+
+    //if (result) emit dataChanged(rcIndex, rcIndex);
     return result;
 }
 Number& GameModel::getItem(const QModelIndex &rcIndex) const
@@ -203,13 +216,13 @@ void GameModel::append(Number number)
     endInsertRows();
 }
 
-void GameModel::set(int nRow, Number number)
+void GameModel::set(int nRow, const Number& rNumber)
 {
     if (nRow < 0 || nRow >= m_Numbers.count())
         return;
 
-    m_Numbers.replace(nRow, number);
-    dataChanged(index(nRow, 0), index(nRow, 0), { ValueRole, VisibleRole, ColorRole, IndexRole });
+    m_Numbers.replace(nRow, rNumber);
+    //dataChanged(index(nRow, 0), index(nRow, 0));
 }
 
 void GameModel::remove(int nRow)
@@ -225,8 +238,7 @@ void GameModel::remove(int nRow)
 QModelIndex GameModel::index(int nRow, int nColumn, const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    QModelIndex index = createIndex(nRow, nColumn);
-    return index;
+    return createIndex(nRow, nColumn);
 }
 
 
