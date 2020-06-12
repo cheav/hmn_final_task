@@ -59,8 +59,6 @@ Window
             root.title = qsTr("Game Find Sum: GAME WIN !")
             controlPanel.startGameButtonEnabled = true
         }
-
-        //Component.onCompleted: generateTargetNumber()
     }
 
     GridLayout

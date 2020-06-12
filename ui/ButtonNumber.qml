@@ -4,12 +4,13 @@ import QtQuick.Controls 1.4
 Rectangle
 {
     id: root
-    property int nButtonNumber
+    property int nButtonValue
     property int nButtonIndex
 
-    property alias buttonVisible: root.visible
+    property alias bButtonVisible: root.visible
     property alias text: text.text
     property alias textColor: text.color
+
     signal clicked
 
     visible: false
@@ -21,12 +22,14 @@ Rectangle
     MouseArea
     {
         anchors.fill: parent
+        property color buttonColor
 
         onPressed:
         {
-            root.color = Qt.lighter("blue")
-            gameLogic.onUserAction(nButtonNumber, nButtonIndex, root.color)
+            buttonColor = Qt.lighter("blue")
+            gameLogic.onUserAction(nButtonValue, nButtonIndex, buttonColor)
         }
+
         onClicked: root.clicked()
     }
 

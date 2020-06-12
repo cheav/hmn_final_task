@@ -18,11 +18,11 @@ GroupBox
 
         ButtonNumber
         {
-            nButtonNumber: numberValue
-            nButtonIndex: numberIndex
-            buttonVisible: numberVisible
-            color: numberColor
-            text: numberValue.toString()
+            nButtonValue: buttonValue
+            nButtonIndex: buttonIndex
+            bButtonVisible: buttonVisible
+            color: buttonColor
+            text: buttonValue.toString()
         }
     }
 

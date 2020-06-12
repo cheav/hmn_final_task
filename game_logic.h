@@ -4,9 +4,9 @@
 #include <QObject>
 #include <QModelIndex>
 #include "number.h"
-#include "game_model.h"
 
 class QTimer;
+class GameModel;
 
 class GameLogic : public QObject
 {
@@ -33,7 +33,7 @@ public slots:
     Q_INVOKABLE void onUserAction(int nUserSelectedNumber, int nIndex, const QString &strButtonColor);
 private:
     void gameFieldRandomFilling();
-    void editModelItem(model_iterator &it, int nIndex);
+    void editModelItem(int nIndex);
     bool GameOverCondition();
     void runGameOver();
     //
@@ -64,7 +64,6 @@ signals:
     void gamePaused();
     void gameOver();
     void gameWin();
-    void dataChanged();
 };
 
 #endif // GAME_LOGIC_H

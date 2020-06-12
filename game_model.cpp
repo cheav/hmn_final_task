@@ -7,10 +7,10 @@ GameModel::GameModel(int nRows, int nColumns, int nLowRandomNumber, int nHighRan
       m_nLowRandomNumber(nLowRandomNumber), m_nHighRandomNumber(nHighRandomNumber),
       m_nVisibleButtonsCount(0)
 {
-    m_roles[ValueRole] = "numberValue";
-    m_roles[VisibleRole] = "numberVisible";
-    m_roles[ColorRole] = "numberColor";
-    m_roles[IndexRole] = "numberIndex";
+    m_roles[ValueRole] = "buttonValue";
+    m_roles[VisibleRole] = "buttonVisible";
+    m_roles[ColorRole] = "buttonColor";
+    m_roles[IndexRole] = "buttonIndex";
 
     srand(time(0));
     fillModel();
@@ -25,15 +25,6 @@ GameModel* GameModel::model() const
 void GameModel::setModel(GameModel* pModel)
 {
     m_pGameModel = pModel;
-}
-
-void GameModel::beginResetModel()
-{
-    QAbstractListModel::beginResetModel();
-}
-void GameModel::endResetModel()
-{
-    QAbstractListModel::endResetModel();
 }
 
 model_iterator GameModel::begin()
@@ -84,7 +75,7 @@ void GameModel::resetVisibleButtonsCount()
 
 void GameModel::fillModel()
 {
-    QAbstractListModel::beginResetModel();
+    beginResetModel();
 
     m_Numbers.clear();
 
@@ -95,7 +86,7 @@ void GameModel::fillModel()
             m_Numbers.append(Number(nRandomNumber, false));
         }
 
-    QAbstractListModel::endResetModel();
+    endResetModel();
 }
 void GameModel::clearModel()
 {
@@ -158,7 +149,7 @@ QVariant GameModel::data(const QModelIndex &rcIndex, int nRole) const
         }
     return QVariant();
 }
-bool GameModel::setData(const QModelIndex &rcIndex, const QVariant &rValue, int nRole)
+bool GameModel::setData(const QModelIndex &rcIndex, const QVariant &rcValue, int nRole)
 {
     bool result = false;
 
@@ -166,7 +157,7 @@ bool GameModel::setData(const QModelIndex &rcIndex, const QVariant &rValue, int 
     {
     case ValueRole:
     {
-        int nValue = rValue.toInt();
+        int nValue = rcValue.toInt();
         m_Numbers[rcIndex.row()].setValue(nValue);
         result = true;
         emit dataChanged(rcIndex, rcIndex, { ValueRole });
@@ -174,7 +165,7 @@ bool GameModel::setData(const QModelIndex &rcIndex, const QVariant &rValue, int 
     }
     case VisibleRole:
     {
-        bool bVisible = rValue.toBool();
+        bool bVisible = rcValue.toBool();
         m_Numbers[rcIndex.row()].setVisible(bVisible);
         result = true;
         emit dataChanged(rcIndex, rcIndex, { VisibleRole });
@@ -182,7 +173,7 @@ bool GameModel::setData(const QModelIndex &rcIndex, const QVariant &rValue, int 
     }
     case ColorRole:
     {
-        QString strColor = rValue.toString();
+        QString strColor = rcValue.toString();
         m_Numbers[rcIndex.row()].setColor(strColor);
         result = true;
         emit dataChanged(rcIndex, rcIndex, { ColorRole });
@@ -191,9 +182,6 @@ bool GameModel::setData(const QModelIndex &rcIndex, const QVariant &rValue, int 
     default: break;
     }
 
-    //qDebug() << "model changed";
-
-    //if (result) emit dataChanged(rcIndex, rcIndex);
     return result;
 }
 Number& GameModel::getItem(const QModelIndex &rcIndex) const
@@ -220,9 +208,7 @@ void GameModel::set(int nRow, const Number& rNumber)
 {
     if (nRow < 0 || nRow >= m_Numbers.count())
         return;
-
     m_Numbers.replace(nRow, rNumber);
-    //dataChanged(index(nRow, 0), index(nRow, 0));
 }
 
 void GameModel::remove(int nRow)
