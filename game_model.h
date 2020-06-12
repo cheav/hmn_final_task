@@ -4,7 +4,7 @@
 #include <QAbstractListModel>
 #include "number.h"
 
-using model_iterator = QList<Number>::iterator;
+using model_iterator = QVector<Number>::iterator;
 
 class GameModel : public QAbstractListModel
 {
@@ -72,7 +72,7 @@ protected:
 private:
     QHash<int, QByteArray> m_roles;
     GameModel *m_pGameModel;
-    QList<Number> m_Numbers;
+    QVector<Number> m_Numbers;
 
     int m_nRows;
     int m_nColumns;

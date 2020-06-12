@@ -99,7 +99,7 @@ bool GameLogic::GameOverCondition()
     int nGameOverCondition = 2 * m_pGameModel->size() / 3;
     //int nGameOverCondition = m_pGameModel->size();
 
-    qDebug() << "buttons count = " << m_pGameModel->visibleButtonsCount();
+    //qDebug() << "buttons count = " << m_pGameModel->visibleButtonsCount();
 
     if(m_pGameModel->visibleButtonsCount() > nGameOverCondition)
         return true;
@@ -238,6 +238,7 @@ void GameLogic::onUserAction(int nUserSelectedNumber, int nIndex, const QString&
                 m_pGameModel->decrementVisibleButtonsCount();
 
                 // Buttons pressed by user before last button above:
+
                 auto it = m_UserSelectedNumbers.begin();
                 for(; it != m_UserSelectedNumbers.end(); ++it)
                 {

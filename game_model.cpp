@@ -29,12 +29,12 @@ void GameModel::setModel(GameModel* pModel)
 
 model_iterator GameModel::begin()
 {
-    QList<Number>::iterator it = m_Numbers.begin();
+    QVector<Number>::iterator it = m_Numbers.begin();
     return it;
 }
 model_iterator GameModel::end()
 {
-    QList<Number>::iterator it = m_Numbers.end();
+    QVector<Number>::iterator it = m_Numbers.end();
     return it;
 }
 
@@ -200,7 +200,8 @@ void GameModel::append(Number number)
     while (nRow < m_Numbers.count())
         ++nRow;
     beginInsertRows(QModelIndex(), nRow, nRow);
-    m_Numbers.insert(nRow, number);
+    //m_Numbers.insert(nRow, number);
+    m_Numbers.push_back(number);
     endInsertRows();
 }
 
