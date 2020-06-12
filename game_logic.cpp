@@ -16,6 +16,9 @@ GameLogic::GameLogic(QObject *pParent) : QObject(pParent), m_nTargetNumber(0),
     connect(m_pTimer, SIGNAL(timeout()), this, SLOT(displayRandomNumber()));
     m_pTimer->setInterval(500);
 }
+GameLogic::SelectedNumber::SelectedNumber(int nValue, const QModelIndex &rcIndex)
+    : m_nValue(nValue), m_modelIndex(rcIndex) {}
+
 GameModel* GameLogic::model() const
 {
     return m_pGameModel;
@@ -203,7 +206,7 @@ void GameLogic::onUserAction(int nUserSelectedNumber, int nIndex, const QString&
         auto it = m_UserSelectedNumbers.begin();
         for(; it != m_UserSelectedNumbers.end(); ++it)
         {
-            int nValue = (*it).value;
+            int nValue = (*it).m_nValue;
             nSum += nValue;
         }
         nSum += nUserSelectedNumber;
@@ -243,9 +246,9 @@ void GameLogic::onUserAction(int nUserSelectedNumber, int nIndex, const QString&
                 for(; it != m_UserSelectedNumbers.end(); ++it)
                 {
                     int nNewRandomValue = generateFieldNumber();
-                    m_pGameModel->setData((*it).modelIndex, nNewRandomValue, GameModel::ValueRole);
-                    m_pGameModel->setData((*it).modelIndex, bButtonVisible, GameModel::VisibleRole);
-                    m_pGameModel->setData((*it).modelIndex, strWhiteButtonColor, GameModel::ColorRole);
+                    m_pGameModel->setData((*it).m_modelIndex, nNewRandomValue, GameModel::ValueRole);
+                    m_pGameModel->setData((*it).m_modelIndex, bButtonVisible, GameModel::VisibleRole);
+                    m_pGameModel->setData((*it).m_modelIndex, strWhiteButtonColor, GameModel::ColorRole);
 
                     m_pGameModel->decrementVisibleButtonsCount();
                 }

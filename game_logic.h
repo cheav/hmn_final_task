@@ -45,9 +45,9 @@ private:
 
     struct SelectedNumber
     {
-        SelectedNumber(int value, QModelIndex index) : value(value), modelIndex(index) {}
-        int value;
-        QModelIndex modelIndex;
+        SelectedNumber(int nValue, const QModelIndex& rcIndex);
+        int m_nValue;
+        QModelIndex m_modelIndex;
     };
     // container of user selected numbers on game field:
     QList<SelectedNumber> m_UserSelectedNumbers;
