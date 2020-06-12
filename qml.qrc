@@ -2,7 +2,7 @@
     <qresource prefix="/">
         <file>ui/main.qml</file>
         <file>ui/MainForm.ui.qml</file>
-        <file>ui/ButtonNumber.qml</file>
+        <file>ui/FieldButton.qml</file>
         <file>ui/GameField.qml</file>
         <file>ui/ControlPanel.qml</file>
         <file>ui/icons/pause.png</file>

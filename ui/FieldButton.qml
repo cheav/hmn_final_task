@@ -7,10 +7,7 @@ Rectangle
     property int nButtonValue
     property int nButtonIndex
 
-    property alias bButtonVisible: root.visible
     property alias text: text.text
-    property alias textColor: text.color
-
     signal clicked
 
     visible: false

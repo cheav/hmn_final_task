@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QModelIndex>
-#include "number.h"
 
 class QTimer;
 class GameModel;
@@ -34,7 +33,7 @@ public slots:
 private:
     void gameFieldRandomFilling();
     void editModelItem(int nIndex);
-    bool GameOverCondition();
+    bool gameOverCondition();
     void runGameOver();
     //
     int userHitCount() const;

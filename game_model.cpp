@@ -29,12 +29,12 @@ void GameModel::setModel(GameModel* pModel)
 
 model_iterator GameModel::begin()
 {
-    QVector<Number>::iterator it = m_Numbers.begin();
+    QVector<Button>::iterator it = m_Numbers.begin();
     return it;
 }
 model_iterator GameModel::end()
 {
-    QVector<Number>::iterator it = m_Numbers.end();
+    QVector<Button>::iterator it = m_Numbers.end();
     return it;
 }
 
@@ -83,7 +83,7 @@ void GameModel::fillModel()
         for(int j = 0; j < m_nColumns; ++j)
         {
             int nRandomNumber = m_nLowRandomNumber + rand() % m_nHighRandomNumber;
-            m_Numbers.append(Number(nRandomNumber, false));
+            m_Numbers.append(Button(nRandomNumber, false));
         }
 
     endResetModel();
@@ -184,9 +184,9 @@ bool GameModel::setData(const QModelIndex &rcIndex, const QVariant &rcValue, int
 
     return result;
 }
-Number& GameModel::getItem(const QModelIndex &rcIndex) const
+Button& GameModel::getItem(const QModelIndex &rcIndex) const
 {
-    Number& rcItem = const_cast<Number&>(m_Numbers[rcIndex.row()]);
+    Button& rcItem = const_cast<Button&>(m_Numbers[rcIndex.row()]);
     return rcItem;
 }
 QHash<int, QByteArray> GameModel::roleNames() const
@@ -194,22 +194,22 @@ QHash<int, QByteArray> GameModel::roleNames() const
     return m_roles;
 }
 
-void GameModel::append(Number number)
+void GameModel::append(const Button &rcButton)
 {
     int nRow = 0;
     while (nRow < m_Numbers.count())
         ++nRow;
     beginInsertRows(QModelIndex(), nRow, nRow);
     //m_Numbers.insert(nRow, number);
-    m_Numbers.push_back(number);
+    m_Numbers.push_back(rcButton);
     endInsertRows();
 }
 
-void GameModel::set(int nRow, const Number& rNumber)
+void GameModel::set(int nRow, const Button& rcButton)
 {
     if (nRow < 0 || nRow >= m_Numbers.count())
         return;
-    m_Numbers.replace(nRow, rNumber);
+    m_Numbers.replace(nRow, rcButton);
 }
 
 void GameModel::remove(int nRow)

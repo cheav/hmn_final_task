@@ -2,9 +2,9 @@
 #define GAME_MODEL_H
 
 #include <QAbstractListModel>
-#include "number.h"
+#include "button.h"
 
-using model_iterator = QVector<Number>::iterator;
+using model_iterator = QVector<Button>::iterator;
 
 class GameModel : public QAbstractListModel
 {
@@ -13,14 +13,14 @@ class GameModel : public QAbstractListModel
     Q_PROPERTY(int rows READ rows WRITE setRows NOTIFY rowsChanged)
     Q_PROPERTY(int columns READ columns WRITE setColumns NOTIFY columnsChanged)
 public:
-    enum NumberRole
+    enum ButtonRole
     {
         ValueRole = Qt::DisplayRole,
         VisibleRole = Qt::UserRole,
         ColorRole,
-        IndexRole,
+        IndexRole
     };
-    Q_ENUM(NumberRole)
+    Q_ENUM(ButtonRole)
 
     GameModel(int nRows = 6, int nColumns = 10,
               int nLowRandomNumber = 1, int nHighRandomNumber = 9,
@@ -53,10 +53,10 @@ public:
     bool setData(const QModelIndex &rcIndex, const QVariant &rcValue, int nRole = ValueRole);
     QModelIndex index(int nRow, int nColumn = 0, const QModelIndex &parent = QModelIndex()) const;
 
-    Number& getItem(const QModelIndex &rcIndex) const;
+    Button& getItem(const QModelIndex &rcIndex) const;
 
-    void append(Number number);
-    void set(int nRow, const Number &rNumber);
+    void append(const Button& rcButton);
+    void set(int nRow, const Button &rcButton);
     void remove(int nRow);
 
     bool empty() const;
@@ -72,7 +72,7 @@ protected:
 private:
     QHash<int, QByteArray> m_roles;
     GameModel *m_pGameModel;
-    QVector<Number> m_Numbers;
+    QVector<Button> m_Numbers;
 
     int m_nRows;
     int m_nColumns;

@@ -25,7 +25,7 @@ Window
     GameLogic
     {
         id: gameLogic
-        model: gameModel.model
+        model: gameModel.model // model pointer
 
         onModelChanged:
         {

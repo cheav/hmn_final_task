@@ -16,11 +16,11 @@ GroupBox
     {
         id: buttonDelegate
 
-        ButtonNumber
+        FieldButton
         {
             nButtonValue: buttonValue
             nButtonIndex: buttonIndex
-            bButtonVisible: buttonVisible
+            visible: buttonVisible
             color: buttonColor
             text: buttonValue.toString()
         }
@@ -37,8 +37,8 @@ GroupBox
 
         width: model.columns * nButtonWidth
         height: model.rows * nButtonHeight
-        cellWidth: width / model.columns
-        cellHeight: height / model.rows
+        cellWidth: nButtonWidth
+        cellHeight: nButtonHeight
 
         delegate: buttonDelegate
     }

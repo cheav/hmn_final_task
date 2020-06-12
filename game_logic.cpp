@@ -97,7 +97,7 @@ void GameLogic::editModelItem(int nIndex)
     m_pGameModel->incrementVisibleButtonsCount();
 }
 
-bool GameLogic::GameOverCondition()
+bool GameLogic::gameOverCondition()
 {
     int nGameOverCondition = 2 * m_pGameModel->size() / 3;
     //int nGameOverCondition = m_pGameModel->size();
@@ -132,7 +132,7 @@ void GameLogic::resetUserHitCount()
 
 void GameLogic::displayRandomNumber()
 {
-    if(GameOverCondition() == true)
+    if(gameOverCondition() == true)
     {
         qDebug() << "Game Over";
         runGameOver();

@@ -3,16 +3,20 @@
 
 #include <QString>
 
-class Number
+// game field button:
+
+class Button
 {
 public:
-    Number(int nValue = 0, bool bVisible = false);
-    int value() const;
-    bool visible() const;
-    QString color() const;
+    Button(int nValue = 0, bool bVisible = false);
 
+    int value() const;
     void setValue(int nValue);
+
+    bool visible() const;
     void setVisible(bool bVisible);
+
+    QString color() const;
     void setColor(const QString& color);
 private:
     int m_nValue;
