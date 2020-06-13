@@ -18,11 +18,10 @@ GroupBox
 
         FieldButton
         {
-            nButtonValue: buttonValue
-            nButtonIndex: buttonIndex
-            visible: buttonVisible
-            color: buttonColor
-            text: buttonValue.toString()
+            nButtonIndex: itemIndex
+            buttonText: itemValue.toString()
+            visible: itemVisible
+            color: itemColor
         }
     }
 

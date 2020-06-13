@@ -16,8 +16,8 @@ GameLogic::GameLogic(QObject *pParent) : QObject(pParent), m_nTargetNumber(0),
     connect(m_pTimer, SIGNAL(timeout()), this, SLOT(displayRandomNumber()));
     m_pTimer->setInterval(500);
 }
-GameLogic::SelectedNumber::SelectedNumber(int nValue, const QModelIndex &rcIndex)
-    : m_nValue(nValue), m_modelIndex(rcIndex) {}
+GameLogic::SelectedItem::SelectedItem(int nValue, int nIndex)
+    : m_nValue(nValue), m_nIndex(nIndex) {}
 
 GameModel* GameLogic::model() const
 {
@@ -35,7 +35,7 @@ void GameLogic::gameFieldRandomFilling()
     int nLastIndex = m_pGameModel->size() - 1;
     int nRandomIndex = rand() % nLastIndex;
 
-    bool bInvisibleButton_Found = false;
+    bool bInvisiblItem_Found = false;
 
     auto begin = m_pGameModel->begin();
     auto end = m_pGameModel->end();
@@ -48,7 +48,7 @@ void GameLogic::gameFieldRandomFilling()
         // find random index
         if((*it).visible() == false && nRandomIndex == nIndex)
         {
-            bInvisibleButton_Found = true;
+            bInvisiblItem_Found = true;
             editModelItem(nIndex);
             //qDebug() << "target";
             break;
@@ -62,7 +62,7 @@ void GameLogic::gameFieldRandomFilling()
             for(; it != end; ++it, ++nIndex)
                 if((*it).visible() == false)
                 {
-                    bInvisibleButton_Found = true;
+                    bInvisiblItem_Found = true;
                     editModelItem(nIndex);
                     //qDebug() << "right";
                     break;
@@ -71,7 +71,7 @@ void GameLogic::gameFieldRandomFilling()
         }
     }
     // find to left of random index
-    if(bInvisibleButton_Found == false)
+    if(bInvisiblItem_Found == false)
     {
         it = begin;
         for(nIndex = 0; it != it_after_random_index_it; ++it, ++nIndex)
@@ -94,7 +94,7 @@ void GameLogic::editModelItem(int nIndex)
     m_pGameModel->setData(modelIndex, bButtonVisible, GameModel::VisibleRole);
     m_pGameModel->setData(modelIndex, strButtonColor, GameModel::ColorRole);
 
-    m_pGameModel->incrementVisibleButtonsCount();
+    m_pGameModel->incrementVisibleItemsCount();
 }
 
 bool GameLogic::gameOverCondition()
@@ -102,16 +102,16 @@ bool GameLogic::gameOverCondition()
     int nGameOverCondition = 2 * m_pGameModel->size() / 3;
     //int nGameOverCondition = m_pGameModel->size();
 
-    //qDebug() << "buttons count = " << m_pGameModel->visibleButtonsCount();
+    //qDebug() << "buttons count = " << m_pGameModel->visibleItemsCount();
 
-    if(m_pGameModel->visibleButtonsCount() > nGameOverCondition)
+    if(m_pGameModel->visibleItemsCount() > nGameOverCondition)
         return true;
     return false;
 }
 void GameLogic::runGameOver()
 {
     m_pTimer->stop();
-    m_UserSelectedNumbers.clear();
+    m_UserSelectedItems.clear();
     emit gameStopped();
     emit gameOver();
 }
@@ -157,9 +157,9 @@ void GameLogic::stopGame()
 {
     m_pTimer->stop();
 
-    m_UserSelectedNumbers.clear();
+    m_UserSelectedItems.clear();
     m_pGameModel->clearModel();
-    m_pGameModel->resetVisibleButtonsCount();
+    m_pGameModel->resetVisibleItemsCount();
     resetUserHitCount();
 
     emit gameStopped();
@@ -179,32 +179,34 @@ int GameLogic::targetNumber() const
     return m_nTargetNumber;
 }
 
-void GameLogic::onUserAction(int nUserSelectedNumber, int nIndex, const QString& strButtonColor)
+void GameLogic::onUserAction(int nIndex, const QString& strUserSelectedNumber)
 {
     // Calculation of sum of numbers selected by user on game field
     // and according logic:
 
     QModelIndex modelIndex = m_pGameModel->index(nIndex);
+    int nUserSelectedNumber = strUserSelectedNumber.toInt();
 
-    QString strWhiteButtonColor("white");
+    QString strItemColor("lightblue");
+    QString strWhiteItemColor("white");
 
     if(nUserSelectedNumber >= targetNumber())
     {
-        m_pGameModel->setData(modelIndex, strWhiteButtonColor, GameModel::ColorRole);
+        m_pGameModel->setData(modelIndex, strWhiteItemColor, GameModel::ColorRole);
         return;
     }
 
-    if(m_UserSelectedNumbers.empty())
+    if(m_UserSelectedItems.empty())
     {
-        m_UserSelectedNumbers.append(SelectedNumber(nUserSelectedNumber, modelIndex));
-        m_pGameModel->setData(modelIndex, strButtonColor, GameModel::ColorRole);
+        m_UserSelectedItems.append(SelectedItem(nUserSelectedNumber, nIndex));
+        m_pGameModel->setData(modelIndex, strItemColor, GameModel::ColorRole);
         qDebug() << nUserSelectedNumber;
     }
     else
     {
         int nSum = 0;
-        auto it = m_UserSelectedNumbers.begin();
-        for(; it != m_UserSelectedNumbers.end(); ++it)
+        auto it = m_UserSelectedItems.begin();
+        for(; it != m_UserSelectedItems.end(); ++it)
         {
             int nValue = (*it).m_nValue;
             nSum += nValue;
@@ -213,8 +215,8 @@ void GameLogic::onUserAction(int nUserSelectedNumber, int nIndex, const QString&
 
         if(nSum < targetNumber())
         {
-            m_UserSelectedNumbers.append(SelectedNumber(nUserSelectedNumber, modelIndex));
-            m_pGameModel->setData(modelIndex, strButtonColor, GameModel::ColorRole);
+            m_UserSelectedItems.append(SelectedItem(nUserSelectedNumber, nIndex));
+            m_pGameModel->setData(modelIndex, strItemColor, GameModel::ColorRole);
             qDebug() << nUserSelectedNumber;
         }
         else if(nSum == targetNumber())
@@ -236,26 +238,27 @@ void GameLogic::onUserAction(int nUserSelectedNumber, int nIndex, const QString&
                 m_pGameModel->setData(modelIndex, bButtonVisible, GameModel::VisibleRole);
 
                 // set game field button white
-                m_pGameModel->setData(modelIndex, strWhiteButtonColor, GameModel::ColorRole);
+                m_pGameModel->setData(modelIndex, strWhiteItemColor, GameModel::ColorRole);
 
-                m_pGameModel->decrementVisibleButtonsCount();
+                m_pGameModel->decrementVisibleItemsCount();
 
-                // Buttons pressed by user before last button above:
+                // Buttons pressed by user before last button:
 
-                auto it = m_UserSelectedNumbers.begin();
-                for(; it != m_UserSelectedNumbers.end(); ++it)
+                auto it = m_UserSelectedItems.begin();
+                for(; it != m_UserSelectedItems.end(); ++it)
                 {
                     int nNewRandomValue = generateFieldNumber();
-                    m_pGameModel->setData((*it).m_modelIndex, nNewRandomValue, GameModel::ValueRole);
-                    m_pGameModel->setData((*it).m_modelIndex, bButtonVisible, GameModel::VisibleRole);
-                    m_pGameModel->setData((*it).m_modelIndex, strWhiteButtonColor, GameModel::ColorRole);
+                    QModelIndex modelIndex = m_pGameModel->index((*it).m_nIndex);
 
-                    m_pGameModel->decrementVisibleButtonsCount();
+                    m_pGameModel->setData(modelIndex, nNewRandomValue, GameModel::ValueRole);
+                    m_pGameModel->setData(modelIndex, bButtonVisible, GameModel::VisibleRole);
+                    m_pGameModel->setData(modelIndex, strWhiteItemColor, GameModel::ColorRole);
+
+                    m_pGameModel->decrementVisibleItemsCount();
                 }
 
                 incrementUserHitCount();
-                m_UserSelectedNumbers.clear();
-
+                m_UserSelectedItems.clear();
                 generateTargetNumber();
             }
 

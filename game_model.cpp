@@ -5,12 +5,12 @@ GameModel::GameModel(int nRows, int nColumns, int nLowRandomNumber, int nHighRan
                      QObject *pParent)
     : QAbstractListModel(pParent), m_pGameModel(this), m_nRows(nRows), m_nColumns(nColumns),
       m_nLowRandomNumber(nLowRandomNumber), m_nHighRandomNumber(nHighRandomNumber),
-      m_nVisibleButtonsCount(0)
+      m_nVisibleItemsCount(0)
 {
-    m_roles[ValueRole] = "buttonValue";
-    m_roles[VisibleRole] = "buttonVisible";
-    m_roles[ColorRole] = "buttonColor";
-    m_roles[IndexRole] = "buttonIndex";
+    m_roles[ValueRole] = "itemValue";
+    m_roles[VisibleRole] = "itemVisible";
+    m_roles[ColorRole] = "itemColor";
+    m_roles[IndexRole] = "itemIndex";
 
     srand(time(0));
     fillModel();
@@ -29,12 +29,12 @@ void GameModel::setModel(GameModel* pModel)
 
 model_iterator GameModel::begin()
 {
-    QVector<Button>::iterator it = m_Numbers.begin();
+    QVector<Item>::iterator it = m_Items.begin();
     return it;
 }
 model_iterator GameModel::end()
 {
-    QVector<Button>::iterator it = m_Numbers.end();
+    QVector<Item>::iterator it = m_Items.end();
     return it;
 }
 
@@ -56,34 +56,34 @@ void GameModel::setHighRandomNumber(int highRandomNum)
     m_nHighRandomNumber = highRandomNum;
 }
 
-int GameModel::visibleButtonsCount() const
+int GameModel::visibleItemsCount() const
 {
-    return m_nVisibleButtonsCount;
+    return m_nVisibleItemsCount;
 }
-void GameModel::incrementVisibleButtonsCount()
+void GameModel::incrementVisibleItemsCount()
 {
-    ++ m_nVisibleButtonsCount;
+    ++ m_nVisibleItemsCount;
 }
-void GameModel::decrementVisibleButtonsCount()
+void GameModel::decrementVisibleItemsCount()
 {
-    -- m_nVisibleButtonsCount;
+    -- m_nVisibleItemsCount;
 }
-void GameModel::resetVisibleButtonsCount()
+void GameModel::resetVisibleItemsCount()
 {
-    m_nVisibleButtonsCount = 0;
+    m_nVisibleItemsCount = 0;
 }
 
 void GameModel::fillModel()
 {
     beginResetModel();
 
-    m_Numbers.clear();
+    m_Items.clear();
 
     for(int i = 0; i < m_nRows; ++i)
         for(int j = 0; j < m_nColumns; ++j)
         {
             int nRandomNumber = m_nLowRandomNumber + rand() % m_nHighRandomNumber;
-            m_Numbers.append(Button(nRandomNumber, false));
+            m_Items.append(Item(nRandomNumber, false));
         }
 
     endResetModel();
@@ -91,7 +91,7 @@ void GameModel::fillModel()
 void GameModel::clearModel()
 {
     beginResetModel();
-    m_Numbers.clear();
+    m_Items.clear();
     endResetModel();
 }
 void GameModel::onRowsChanged()
@@ -105,15 +105,15 @@ void GameModel::onColumnsChanged()
 //-------------------------------------------------------------------------------------------------
 int GameModel::rowCount(const QModelIndex &) const
 {
-    return m_Numbers.count();
+    return m_Items.count();
 }
 bool GameModel::empty() const
 {
-    return m_Numbers.empty();
+    return m_Items.empty();
 }
 int GameModel::size() const
 {
-    return m_Numbers.size();
+    return m_Items.size();
 }
 
 int GameModel::rows() const
@@ -141,9 +141,9 @@ QVariant GameModel::data(const QModelIndex &rcIndex, int nRole) const
     if (rcIndex.row() < rowCount())
         switch (nRole)
         {
-        case ValueRole: return m_Numbers.at(rcIndex.row()).value();
-        case VisibleRole: return m_Numbers.at(rcIndex.row()).visible();
-        case ColorRole: return m_Numbers.at(rcIndex.row()).color();
+        case ValueRole: return m_Items.at(rcIndex.row()).value();
+        case VisibleRole: return m_Items.at(rcIndex.row()).visible();
+        case ColorRole: return m_Items.at(rcIndex.row()).color();
         case IndexRole: return rcIndex.row();
         default: return QVariant();
         }
@@ -158,7 +158,7 @@ bool GameModel::setData(const QModelIndex &rcIndex, const QVariant &rcValue, int
     case ValueRole:
     {
         int nValue = rcValue.toInt();
-        m_Numbers[rcIndex.row()].setValue(nValue);
+        m_Items[rcIndex.row()].setValue(nValue);
         result = true;
         emit dataChanged(rcIndex, rcIndex, { ValueRole });
         break;
@@ -166,7 +166,7 @@ bool GameModel::setData(const QModelIndex &rcIndex, const QVariant &rcValue, int
     case VisibleRole:
     {
         bool bVisible = rcValue.toBool();
-        m_Numbers[rcIndex.row()].setVisible(bVisible);
+        m_Items[rcIndex.row()].setVisible(bVisible);
         result = true;
         emit dataChanged(rcIndex, rcIndex, { VisibleRole });
         break;
@@ -174,7 +174,7 @@ bool GameModel::setData(const QModelIndex &rcIndex, const QVariant &rcValue, int
     case ColorRole:
     {
         QString strColor = rcValue.toString();
-        m_Numbers[rcIndex.row()].setColor(strColor);
+        m_Items[rcIndex.row()].setColor(strColor);
         result = true;
         emit dataChanged(rcIndex, rcIndex, { ColorRole });
         break;
@@ -184,9 +184,9 @@ bool GameModel::setData(const QModelIndex &rcIndex, const QVariant &rcValue, int
 
     return result;
 }
-Button& GameModel::getItem(const QModelIndex &rcIndex) const
+Item& GameModel::getItem(const QModelIndex &rcIndex) const
 {
-    Button& rcItem = const_cast<Button&>(m_Numbers[rcIndex.row()]);
+    Item& rcItem = const_cast<Item&>(m_Items[rcIndex.row()]);
     return rcItem;
 }
 QHash<int, QByteArray> GameModel::roleNames() const
@@ -194,31 +194,31 @@ QHash<int, QByteArray> GameModel::roleNames() const
     return m_roles;
 }
 
-void GameModel::append(const Button &rcButton)
+void GameModel::append(const Item &rcItem)
 {
     int nRow = 0;
-    while (nRow < m_Numbers.count())
+    while (nRow < m_Items.count())
         ++nRow;
     beginInsertRows(QModelIndex(), nRow, nRow);
     //m_Numbers.insert(nRow, number);
-    m_Numbers.push_back(rcButton);
+    m_Items.push_back(rcItem);
     endInsertRows();
 }
 
-void GameModel::set(int nRow, const Button& rcButton)
+void GameModel::set(int nRow, const Item& rcItem)
 {
-    if (nRow < 0 || nRow >= m_Numbers.count())
+    if (nRow < 0 || nRow >= m_Items.count())
         return;
-    m_Numbers.replace(nRow, rcButton);
+    m_Items.replace(nRow, rcItem);
 }
 
 void GameModel::remove(int nRow)
 {
-    if (nRow < 0 || nRow >= m_Numbers.count())
+    if (nRow < 0 || nRow >= m_Items.count())
         return;
 
     beginRemoveRows(QModelIndex(), nRow, nRow);
-    m_Numbers.removeAt(nRow);
+    m_Items.removeAt(nRow);
     endRemoveRows();
 }
 

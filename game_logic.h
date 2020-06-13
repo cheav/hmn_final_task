@@ -2,7 +2,7 @@
 #define GAME_LOGIC_H
 
 #include <QObject>
-#include <QModelIndex>
+#include <QVector>
 
 class QTimer;
 class GameModel;
@@ -29,7 +29,7 @@ public:
     Q_INVOKABLE int generateFieldNumber();
 public slots:
     void displayRandomNumber();
-    Q_INVOKABLE void onUserAction(int nUserSelectedNumber, int nIndex, const QString &strButtonColor);
+    Q_INVOKABLE void onUserAction(int nIndex, const QString& strUserSelectedNumber);
 private:
     void gameFieldRandomFilling();
     void editModelItem(int nIndex);
@@ -42,14 +42,14 @@ private:
 private:
     GameModel *m_pGameModel;
 
-    struct SelectedNumber
+    struct SelectedItem
     {
-        SelectedNumber(int nValue, const QModelIndex& rcIndex);
+        SelectedItem(int nValue = 0, int nIndex = 0);
         int m_nValue;
-        QModelIndex m_modelIndex;
+        int m_nIndex;
     };
     // container of user selected numbers on game field:
-    QList<SelectedNumber> m_UserSelectedNumbers;
+    QVector<SelectedItem> m_UserSelectedItems;
     //
     QTimer *m_pTimer;
     int m_nTargetNumber;

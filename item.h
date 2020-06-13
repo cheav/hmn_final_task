@@ -1,14 +1,12 @@
-#ifndef NUMBER_H
-#define NUMBER_H
+#ifndef ITEM_H
+#define ITEM_H
 
 #include <QString>
 
-// game field button:
-
-class Button
+class Item
 {
 public:
-    Button(int nValue = 0, bool bVisible = false);
+    Item(int nValue = 0, bool bVisible = false, const QString& color = "white");
 
     int value() const;
     void setValue(int nValue);
@@ -24,4 +22,4 @@ private:
     QString m_strColor;
 };
 
-#endif // NUMBER_H
+#endif // ITEM_H

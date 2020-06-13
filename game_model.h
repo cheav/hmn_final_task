@@ -2,9 +2,10 @@
 #define GAME_MODEL_H
 
 #include <QAbstractListModel>
-#include "button.h"
+#include <QVector>
+#include "item.h"
 
-using model_iterator = QVector<Button>::iterator;
+using model_iterator = QVector<Item>::iterator;
 
 class GameModel : public QAbstractListModel
 {
@@ -13,14 +14,14 @@ class GameModel : public QAbstractListModel
     Q_PROPERTY(int rows READ rows WRITE setRows NOTIFY rowsChanged)
     Q_PROPERTY(int columns READ columns WRITE setColumns NOTIFY columnsChanged)
 public:
-    enum ButtonRole
+    enum ItemRole
     {
         ValueRole = Qt::DisplayRole,
         VisibleRole = Qt::UserRole,
         ColorRole,
         IndexRole
     };
-    Q_ENUM(ButtonRole)
+    Q_ENUM(ItemRole)
 
     GameModel(int nRows = 6, int nColumns = 10,
               int nLowRandomNumber = 1, int nHighRandomNumber = 9,
@@ -38,10 +39,10 @@ public:
     int highRandomNumber() const;
     void setHighRandomNumber(int highRandomNum);
 
-    int visibleButtonsCount() const;
-    void incrementVisibleButtonsCount();
-    void decrementVisibleButtonsCount();
-    void resetVisibleButtonsCount();
+    int visibleItemsCount() const;
+    void incrementVisibleItemsCount();
+    void decrementVisibleItemsCount();
+    void resetVisibleItemsCount();
 public slots:
     void fillModel();
     void clearModel();
@@ -53,10 +54,10 @@ public:
     bool setData(const QModelIndex &rcIndex, const QVariant &rcValue, int nRole = ValueRole);
     QModelIndex index(int nRow, int nColumn = 0, const QModelIndex &parent = QModelIndex()) const;
 
-    Button& getItem(const QModelIndex &rcIndex) const;
+    Item& getItem(const QModelIndex &rcIndex) const;
 
-    void append(const Button& rcButton);
-    void set(int nRow, const Button &rcButton);
+    void append(const Item& rcItem);
+    void set(int nRow, const Item &rcItem);
     void remove(int nRow);
 
     bool empty() const;
@@ -72,13 +73,13 @@ protected:
 private:
     QHash<int, QByteArray> m_roles;
     GameModel *m_pGameModel;
-    QVector<Button> m_Numbers;
+    QVector<Item> m_Items;
 
     int m_nRows;
     int m_nColumns;
     int m_nLowRandomNumber;
     int m_nHighRandomNumber;
-    int m_nVisibleButtonsCount;
+    int m_nVisibleItemsCount;
 signals:
     void modelChanged();
     void rowsChanged();
