@@ -17,10 +17,9 @@ Window
     minimumWidth: mainLayout.Layout.minimumWidth + 2 * margin
     minimumHeight: mainLayout.Layout.minimumHeight + 2 * margin
 
-    GameModel
-    {
-        id: gameModel
-    }
+    GameModel { id: gameModel }
+
+    Component{ id: emptyComponent; Item {} }
 
     GameLogic
     {
@@ -39,11 +38,13 @@ Window
         {
             gameField.gridViewEnabled = true
             root.title = qsTr("Game Find Sum: running")
+            animationLoader.sourceComponent = emptyComponent
         }
         onGameStopped:
         {
             gameField.gridViewEnabled = false
             root.title = qsTr("Game Find Sum: stopped")
+            animationLoader.sourceComponent = emptyComponent
         }
         onGamePaused:
         {
@@ -53,11 +54,13 @@ Window
         onGameOver:
         {
             root.title = qsTr("Game Find Sum: GAME OVER !")
+            animationLoader.sourceComponent = gameField.animationGameOver
         }
         onGameWin:
         {
             root.title = qsTr("Game Find Sum: GAME WIN !")
             controlPanel.startGameButtonEnabled = true
+            animationLoader.sourceComponent = gameField.animationGameWin
         }
     }
 
@@ -74,6 +77,12 @@ Window
         {
             id: gameField
             gridModel: gameModel
+
+            Loader
+            {
+                id: animationLoader
+                anchors.centerIn: parent
+            }
         }
 
         Label

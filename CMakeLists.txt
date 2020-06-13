@@ -7,10 +7,6 @@ set(CMAKE_CXX_COMPILER_WORKS 1)
 
 project(find_sum LANGUAGES CXX)
 
-#set(CMAKE_INCLUDE_CURRENT_DIR ON)
-#set(CMAKE_AUTOMOC ON)
-#set(CMAKE_AUTORCC ON)
-
 find_package(Qt5 COMPONENTS Core Quick REQUIRED)
 
 qt5_wrap_cpp(MOC_WRAPPERS item.h game_model.h game_logic.h)

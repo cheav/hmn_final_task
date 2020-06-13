@@ -8,6 +8,9 @@ GroupBox
     property alias gridView: view
     property alias gridViewEnabled: view.enabled
 
+    property alias animationGameWin: animationGameWin
+    property alias animationGameOver: animationGameOver
+
     id: gridBox
     Layout.fillWidth: true
     Layout.fillHeight: true
@@ -40,6 +43,24 @@ GroupBox
         cellHeight: nButtonHeight
 
         delegate: buttonDelegate
-    }
+
+        Component
+        {
+            id: animationGameWin
+            GameImage
+            {
+                imageSource: "icons/game_win.png"
+            }
+        }
+        Component
+        {
+            id: animationGameOver
+            GameImage
+            {
+                imageSource: "icons/game_over.png"
+            }
+        }
+
+    } // GridView
 
 } // GroupBox
