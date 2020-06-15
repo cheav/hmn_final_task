@@ -12,6 +12,7 @@ class GameLogic : public QObject
     Q_OBJECT
     Q_PROPERTY(GameModel* model READ model WRITE setModel NOTIFY modelChanged)
     Q_PROPERTY(int targetNumber READ targetNumber WRITE setTargetNumber NOTIFY targetNumberChanged)
+    Q_PROPERTY(int gameLevel READ gameLevel WRITE setGameLevel NOTIFY gameLevelChanged)
 public:
     GameLogic(QObject *pParent = nullptr);
 
@@ -27,9 +28,14 @@ public:
 
     Q_INVOKABLE int generateTargetNumber();
     Q_INVOKABLE int generateFieldNumber();
+
+    int gameLevel() const;
+    void setGameLevel(int nLevel);
 public slots:
     void displayRandomNumber();
     Q_INVOKABLE void onUserAction(int nIndex, const QString& strUserSelectedNumber);
+private slots:
+    void onGameLevelChanged();
 private:
     void gameFieldRandomFilling();
     void editModelItem(int nIndex);
@@ -55,6 +61,7 @@ private:
     int m_nTargetNumber;
     int m_nGameWinCondition;
     int m_nUserHitCount;
+    int m_nGameLevel;
 signals:
     void modelChanged();
     void targetNumberChanged();
@@ -63,6 +70,7 @@ signals:
     void gamePaused();
     void gameOver();
     void gameWin();
+    void gameLevelChanged();
 };
 
 #endif // GAME_LOGIC_H

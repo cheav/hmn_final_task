@@ -84,6 +84,8 @@ signals:
     void modelChanged();
     void rowsChanged();
     void columnsChanged();
+    void lowRandomNumberChanged();
+    void highRandomNumberChanged();
 };
 
 #endif // GAME_MODEL_H

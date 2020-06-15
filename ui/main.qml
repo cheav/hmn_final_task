@@ -85,19 +85,33 @@ Window
             }
         }
 
-        Label
+        ColumnLayout
         {
-            id: targetLabel
-            width: 30
-            color: "blue"
-            font
+            spacing: 2
+
+            Label
             {
-                family: "Arial"
-                pointSize: 20
-                bold: true
+                id: targetLabel
+                Layout.alignment: Qt.AlignCenter
+                Layout.preferredHeight: gameField.height / 2
+
+                color: "blue"
+                font
+                {
+                    family: "Arial"
+                    pointSize: 20
+                    bold: true
+                }
+                text: "0"
             }
-            text: "0"
+
+            LevelButton{ nLevel: 1 }
+            LevelButton{ nLevel: 2 }
+            LevelButton{ nLevel: 3 }
+            LevelButton{ nLevel: 4 }
+            LevelButton{ nLevel: 5 }
         }
+
 
         ControlPanel
         {

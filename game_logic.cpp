@@ -8,13 +8,15 @@
 #include <QDebug>
 
 GameLogic::GameLogic(QObject *pParent) : QObject(pParent), m_nTargetNumber(0),
-    m_nGameWinCondition(2), m_nUserHitCount(0)
+    m_nGameWinCondition(2), m_nUserHitCount(0), m_nGameLevel(1)
 {
     srand(time(0));
 
     m_pTimer = new QTimer(this);
     connect(m_pTimer, SIGNAL(timeout()), this, SLOT(displayRandomNumber()));
     m_pTimer->setInterval(500);
+
+    connect(this, SIGNAL(gameLevelChanged()), this, SLOT(onGameLevelChanged()));
 }
 GameLogic::SelectedItem::SelectedItem(int nValue, int nIndex)
     : m_nValue(nValue), m_nIndex(nIndex) {}
@@ -128,7 +130,6 @@ void GameLogic::resetUserHitCount()
 {
     m_nUserHitCount = 0;
 }
-
 
 void GameLogic::displayRandomNumber()
 {
@@ -276,6 +277,46 @@ void GameLogic::onUserAction(int nIndex, const QString& strUserSelectedNumber)
     return;
 }
 
+void GameLogic::onGameLevelChanged()
+{
+    stopGame();
+
+    switch (m_nGameLevel) {
+    case 1:
+    {
+        m_pGameModel->setLowRandomNumber(1);
+        m_pGameModel->setHighRandomNumber(9);
+        break;
+    }
+    case 2:
+    {
+        m_pGameModel->setLowRandomNumber(1);
+        m_pGameModel->setHighRandomNumber(14);
+        break;
+    }
+    case 3:
+    {
+        m_pGameModel->setLowRandomNumber(1);
+        m_pGameModel->setHighRandomNumber(19);
+        break;
+    }
+    case 4:
+    {
+        m_pGameModel->setLowRandomNumber(1);
+        m_pGameModel->setHighRandomNumber(24);
+        break;
+    }
+    case 5:
+    {
+        m_pGameModel->setLowRandomNumber(1);
+        m_pGameModel->setHighRandomNumber(29);
+        break;
+    }
+    default:  break;
+    }
+
+    startGame();
+}
 int GameLogic::generateTargetNumber()
 {
     // game field numbers limits:
@@ -300,3 +341,12 @@ int GameLogic::generateFieldNumber()
     return nFieldNumber;
 }
 
+int GameLogic::gameLevel() const
+{
+    return m_nGameLevel;
+}
+void GameLogic::setGameLevel(int nLevel)
+{
+    m_nGameLevel = nLevel;
+    emit gameLevelChanged();
+}
