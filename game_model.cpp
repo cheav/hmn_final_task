@@ -184,11 +184,11 @@ bool GameModel::setData(const QModelIndex &rcIndex, const QVariant &rcValue, int
 
     return result;
 }
-Item& GameModel::getItem(const QModelIndex &rcIndex) const
+bool GameModel::setItemData(const QModelIndex &index, const QHash<int, QVariant> &roles)
 {
-    Item& rcItem = const_cast<Item&>(m_Items[rcIndex.row()]);
-    return rcItem;
+    //
 }
+
 QHash<int, QByteArray> GameModel::roleNames() const
 {
     return m_roles;

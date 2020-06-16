@@ -5,7 +5,6 @@ import QtQuick.Layouts 1.3
 GroupBox
 {
     property alias gridModel: view.model
-    property alias gridView: view
     property alias gridViewEnabled: view.enabled
 
     property alias animationGameWin: animationGameWin
@@ -33,14 +32,12 @@ GroupBox
         id: view
         flow: GridView.FlowLeftToRight
 
-        property int nButtonSize: 60
-        property int nButtonWidth: nButtonSize
-        property int nButtonHeight: nButtonSize
+        property int nCellSize: 60
 
-        width: model.columns * nButtonWidth
-        height: model.rows * nButtonHeight
-        cellWidth: nButtonWidth
-        cellHeight: nButtonHeight
+        width: model.columns * nCellSize
+        height: model.rows * nCellSize
+        cellWidth: nCellSize
+        cellHeight: nCellSize
 
         delegate: buttonDelegate
 

@@ -9,8 +9,12 @@ Rectangle
 
     height: 30
     width: 60
-    border.width: 1
-    color: "lightgreen"
+    color: "lightblue"
+
+    function actualLevel(nLevel)
+    {
+        levelLabel.text = "LEVEL: " + nLevel
+    }
 
     MouseArea
     {
@@ -23,6 +27,7 @@ Rectangle
             oldColor = root.color
             root.color = Qt.darker(oldColor)
             gameLogic.gameLevel = nLevel
+            actualLevel(nLevel)
         }
 
         onReleased: root.color = oldColor

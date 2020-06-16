@@ -49,12 +49,11 @@ public slots:
     void onRowsChanged();
     void onColumnsChanged();
 public:
-    int rowCount(const QModelIndex & = QModelIndex()) const;
-    QVariant data(const QModelIndex &rcIndex, int nRole = ValueRole) const;
-    bool setData(const QModelIndex &rcIndex, const QVariant &rcValue, int nRole = ValueRole);
-    QModelIndex index(int nRow, int nColumn = 0, const QModelIndex &parent = QModelIndex()) const;
-
-    Item& getItem(const QModelIndex &rcIndex) const;
+    int rowCount(const QModelIndex & = QModelIndex()) const override;
+    QVariant data(const QModelIndex &rcIndex, int nRole = ValueRole) const override;
+    bool setData(const QModelIndex &rcIndex, const QVariant &rcValue, int nRole = ValueRole) override;
+    QModelIndex index(int nRow, int nColumn = 0, const QModelIndex &parent = QModelIndex()) const override;
+    bool setItemData(const QModelIndex &index, const QHash<int, QVariant> &roles);
 
     void append(const Item& rcItem);
     void set(int nRow, const Item &rcItem);

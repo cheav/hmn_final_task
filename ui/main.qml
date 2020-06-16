@@ -62,6 +62,10 @@ Window
             controlPanel.startGameButtonEnabled = true
             animationLoader.sourceComponent = gameField.animationGameWin
         }
+        onGameLevelChanged:
+        {
+            controlPanel.startGameButtonEnabled = true
+        }
     }
 
     GridLayout
@@ -87,13 +91,10 @@ Window
 
         ColumnLayout
         {
-            spacing: 2
-
             Label
             {
                 id: targetLabel
                 Layout.alignment: Qt.AlignCenter
-                Layout.preferredHeight: gameField.height / 2
 
                 color: "blue"
                 font
@@ -102,7 +103,22 @@ Window
                     pointSize: 20
                     bold: true
                 }
-                text: "0"
+            }
+
+            Label
+            {
+                id: levelLabel
+                Layout.alignment: Qt.AlignCenter
+                Layout.preferredHeight: gameField.height / 3
+
+                color: "blue"
+                font
+                {
+                    family: "Arial"
+                    pointSize: 10
+                    bold: true
+                }
+                text: "LEVEL: 1\n"
             }
 
             LevelButton{ nLevel: 1 }
@@ -110,8 +126,9 @@ Window
             LevelButton{ nLevel: 3 }
             LevelButton{ nLevel: 4 }
             LevelButton{ nLevel: 5 }
-        }
 
+            Component.onCompleted: targetLabel.text = "0"
+        }
 
         ControlPanel
         {

@@ -314,8 +314,6 @@ void GameLogic::onGameLevelChanged()
     }
     default:  break;
     }
-
-    startGame();
 }
 int GameLogic::generateTargetNumber()
 {
