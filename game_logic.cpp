@@ -281,39 +281,14 @@ void GameLogic::onGameLevelChanged()
 {
     stopGame();
 
-    switch (m_nGameLevel) {
-    case 1:
-    {
-        m_pGameModel->setLowRandomNumber(1);
-        m_pGameModel->setHighRandomNumber(9);
-        break;
-    }
-    case 2:
-    {
-        m_pGameModel->setLowRandomNumber(1);
-        m_pGameModel->setHighRandomNumber(14);
-        break;
-    }
-    case 3:
-    {
-        m_pGameModel->setLowRandomNumber(1);
-        m_pGameModel->setHighRandomNumber(19);
-        break;
-    }
-    case 4:
-    {
-        m_pGameModel->setLowRandomNumber(1);
-        m_pGameModel->setHighRandomNumber(24);
-        break;
-    }
-    case 5:
-    {
-        m_pGameModel->setLowRandomNumber(1);
-        m_pGameModel->setHighRandomNumber(29);
-        break;
-    }
-    default:  break;
-    }
+    typedef std::pair<int,int> p;
+    static std::array<p, 5> gameLevels = { p{1,9}, p{1,14}, p{1,19}, p{1,24}, p{1,29} };
+
+    m_pGameModel->setLowRandomNumber( gameLevels[m_nGameLevel - 1].first );
+    m_pGameModel->setHighRandomNumber( gameLevels[m_nGameLevel - 1].second );
+
+    qDebug() << "low = " << m_pGameModel->lowRandomNumber() <<
+                ", high = " << m_pGameModel->highRandomNumber();
 }
 int GameLogic::generateTargetNumber()
 {
