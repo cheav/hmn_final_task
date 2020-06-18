@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QVector>
+#include <QList>
 
 class QTimer;
 class GameModel;
@@ -18,6 +19,8 @@ public:
 
     GameModel* model() const;
     void setModel(GameModel* pModel);
+
+    Q_INVOKABLE void initIndexesContainer();
 
     Q_INVOKABLE void startGame();
     Q_INVOKABLE void stopGame();
@@ -38,7 +41,7 @@ private slots:
     void onGameLevelChanged();
 private:
     void gameFieldRandomFilling();
-    void editModelItem(int nIndex);
+    void setNewInvisibleItem(int nIndex, const QString &strItemColor);
     bool gameOverCondition();
     void runGameOver();
     //
@@ -47,6 +50,8 @@ private:
     void resetUserHitCount();
 private:
     GameModel *m_pGameModel;
+    // for game field filling by normal distribution:
+    QList<int> m_ItemIndexes;
 
     struct SelectedItem
     {

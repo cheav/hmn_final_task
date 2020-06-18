@@ -28,6 +28,7 @@ Window
 
         onModelChanged:
         {
+            initIndexesContainer()
             generateTargetNumber()
         }
         onTargetNumberChanged:

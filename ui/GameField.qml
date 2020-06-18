@@ -44,7 +44,7 @@ GroupBox
         Component
         {
             id: animationGameWin
-            GameImage
+            AnimImage
             {
                 imageSource: "icons/game_win.png"
             }
@@ -52,7 +52,7 @@ GroupBox
         Component
         {
             id: animationGameOver
-            GameImage
+            AnimImage
             {
                 imageSource: "icons/game_over.png"
             }

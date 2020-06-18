@@ -11,7 +11,7 @@
         <file>ui/ControlButton.qml</file>
         <file>ui/icons/game_over.png</file>
         <file>ui/icons/game_win.png</file>
-        <file>ui/GameImage.qml</file>
+        <file>ui/AnimImage.qml</file>
         <file>ui/LevelButton.qml</file>
     </qresource>
 </RCC>

@@ -111,7 +111,7 @@ bool GameModel::empty() const
 {
     return m_Items.empty();
 }
-int GameModel::size() const
+int GameModel::count() const
 {
     return m_Items.size();
 }

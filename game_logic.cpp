@@ -7,8 +7,8 @@
 #include <QTimer>
 #include <QDebug>
 
-GameLogic::GameLogic(QObject *pParent) : QObject(pParent), m_nTargetNumber(0),
-    m_nGameWinCondition(2), m_nUserHitCount(0), m_nGameLevel(1)
+GameLogic::GameLogic(QObject *pParent) : QObject(pParent),
+    m_nTargetNumber(0), m_nGameWinCondition(2), m_nUserHitCount(0), m_nGameLevel(1)
 {
     srand(time(0));
 
@@ -31,64 +31,25 @@ void GameLogic::setModel(GameModel *pModel)
     emit modelChanged();
 }
 
+void GameLogic::initIndexesContainer()
+{
+    int nLastIndex = m_pGameModel->count() - 1;
+    for(int nIndex = 0; nIndex <= nLastIndex; ++nIndex)
+        m_ItemIndexes.append(nIndex);
+}
+
 void GameLogic::gameFieldRandomFilling()
 {
-    // generate random index:
-    int nLastIndex = m_pGameModel->size() - 1;
-    int nRandomIndex = rand() % nLastIndex;
+    // generate random index (normal distribution):
 
-    bool bInvisiblItem_Found = false;
+    int nRandomIndex = rand() % m_ItemIndexes.size();
+    int nIndex = m_ItemIndexes.at(nRandomIndex);
 
-    auto begin = m_pGameModel->begin();
-    auto end = m_pGameModel->end();
-    auto it = begin;
-    auto it_after_random_index_it = it;
+    if(!m_ItemIndexes.isEmpty())
+        m_ItemIndexes.removeAt(nRandomIndex);
 
-    int nIndex = 0;
-    for(; it != end; ++it, ++nIndex)
-    {
-        // find random index
-        if((*it).visible() == false && nRandomIndex == nIndex)
-        {
-            bInvisiblItem_Found = true;
-            editModelItem(nIndex);
-            //qDebug() << "target";
-            break;
-        }
-        // find to right of random index
-        else if((*it).visible() == true && nRandomIndex == nIndex)
-        {
-            it = it + 1;
-            nIndex += 1;
-            it_after_random_index_it = it;
-            for(; it != end; ++it, ++nIndex)
-                if((*it).visible() == false)
-                {
-                    bInvisiblItem_Found = true;
-                    editModelItem(nIndex);
-                    //qDebug() << "right";
-                    break;
-                }
-            break;
-        }
-    }
-    // find to left of random index
-    if(bInvisiblItem_Found == false)
-    {
-        it = begin;
-        for(nIndex = 0; it != it_after_random_index_it; ++it, ++nIndex)
-            if((*it).visible() == false)
-            {
-                editModelItem(nIndex);
-                //qDebug() << "left";
-                break;
-            }
-    }
+    // edit model item:
 
-    //qDebug() << nRandomIndex;
-}
-void GameLogic::editModelItem(int nIndex)
-{
     bool bButtonVisible = true;
     QString strButtonColor("white");
     QModelIndex modelIndex = m_pGameModel->index(nIndex);
@@ -97,12 +58,34 @@ void GameLogic::editModelItem(int nIndex)
     m_pGameModel->setData(modelIndex, strButtonColor, GameModel::ColorRole);
 
     m_pGameModel->incrementVisibleItemsCount();
+
+    //qDebug() << nRandomIndex << "; index = " << nIndex;
+}
+void GameLogic::setNewInvisibleItem(int nIndex, const QString& strItemColor)
+{    
+    QModelIndex modelIndex = m_pGameModel->index(nIndex);
+
+    // set new random value in game field button
+    int nNewRandomValue = generateFieldNumber();
+    m_pGameModel->setData(modelIndex, nNewRandomValue, GameModel::ValueRole);
+
+    // set game field button invisible
+    bool bButtonVisible = false;
+    m_pGameModel->setData(modelIndex, bButtonVisible, GameModel::VisibleRole);
+
+    // set game field button color
+    m_pGameModel->setData(modelIndex, strItemColor, GameModel::ColorRole);
+
+    // for normal distribution filling of game field:
+    m_ItemIndexes.append(nIndex);
+
+    m_pGameModel->decrementVisibleItemsCount();
 }
 
 bool GameLogic::gameOverCondition()
 {
-    int nGameOverCondition = 2 * m_pGameModel->size() / 3;
-    //int nGameOverCondition = m_pGameModel->size();
+    int nGameOverCondition = 2 * m_pGameModel->count() / 3;
+    //int nGameOverCondition = m_pGameModel->count();
 
     //qDebug() << "buttons count = " << m_pGameModel->visibleItemsCount();
 
@@ -113,6 +96,7 @@ bool GameLogic::gameOverCondition()
 void GameLogic::runGameOver()
 {
     m_pTimer->stop();
+    m_ItemIndexes.clear();
     m_UserSelectedItems.clear();
     emit gameStopped();
     emit gameOver();
@@ -150,6 +134,10 @@ void GameLogic::startGame()
         m_pGameModel->fillModel();
         generateTargetNumber();
     }
+    if(m_ItemIndexes.isEmpty())
+    {
+        initIndexesContainer();
+    }
 
     m_pTimer->start();
     emit gameStarted();
@@ -158,6 +146,7 @@ void GameLogic::stopGame()
 {
     m_pTimer->stop();
 
+    m_ItemIndexes.clear();
     m_UserSelectedItems.clear();
     m_pGameModel->clearModel();
     m_pGameModel->resetVisibleItemsCount();
@@ -224,44 +213,24 @@ void GameLogic::onUserAction(int nIndex, const QString& strUserSelectedNumber)
         {
             qDebug() << "sum = " << nSum << " !";
 
-            if(modelIndex.isValid())
+            // Disappearance of buttons from game field:
+
+            // Last button pressed by user:
+            setNewInvisibleItem(nIndex, strWhiteItemColor);
+
+            // Buttons pressed by user before last button:
+
+            auto it = m_UserSelectedItems.begin();
+            for(; it != m_UserSelectedItems.end(); ++it)
             {
-                // Disappearance of buttons from game field:
-
-                // Last button pressed by user:
-
-                // set new random value in game field button
-                int nNewRandomValue = generateFieldNumber();
-                m_pGameModel->setData(modelIndex, nNewRandomValue, GameModel::ValueRole);
-
-                // set game field button invisible
-                bool bButtonVisible = false;
-                m_pGameModel->setData(modelIndex, bButtonVisible, GameModel::VisibleRole);
-
-                // set game field button white
-                m_pGameModel->setData(modelIndex, strWhiteItemColor, GameModel::ColorRole);
-
-                m_pGameModel->decrementVisibleItemsCount();
-
-                // Buttons pressed by user before last button:
-
-                auto it = m_UserSelectedItems.begin();
-                for(; it != m_UserSelectedItems.end(); ++it)
-                {
-                    int nNewRandomValue = generateFieldNumber();
-                    QModelIndex modelIndex = m_pGameModel->index((*it).m_nIndex);
-
-                    m_pGameModel->setData(modelIndex, nNewRandomValue, GameModel::ValueRole);
-                    m_pGameModel->setData(modelIndex, bButtonVisible, GameModel::VisibleRole);
-                    m_pGameModel->setData(modelIndex, strWhiteItemColor, GameModel::ColorRole);
-
-                    m_pGameModel->decrementVisibleItemsCount();
-                }
-
-                incrementUserHitCount();
-                m_UserSelectedItems.clear();
-                generateTargetNumber();
+                nIndex = (*it).m_nIndex;
+                setNewInvisibleItem(nIndex, strWhiteItemColor);
             }
+
+            incrementUserHitCount();
+            m_UserSelectedItems.clear();
+            generateTargetNumber();
+
 
             // game win
             if(m_nGameWinCondition == userHitCount())
@@ -287,8 +256,8 @@ void GameLogic::onGameLevelChanged()
     m_pGameModel->setLowRandomNumber( gameLevels[m_nGameLevel - 1].first );
     m_pGameModel->setHighRandomNumber( gameLevels[m_nGameLevel - 1].second );
 
-    qDebug() << "low = " << m_pGameModel->lowRandomNumber() <<
-                ", high = " << m_pGameModel->highRandomNumber();
+//    qDebug() << "low = " << m_pGameModel->lowRandomNumber() <<
+//                ", high = " << m_pGameModel->highRandomNumber();
 }
 int GameLogic::generateTargetNumber()
 {

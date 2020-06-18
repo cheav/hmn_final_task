@@ -60,7 +60,7 @@ public:
     void remove(int nRow);
 
     bool empty() const;
-    int size() const;
+    int count() const;
 
     Q_INVOKABLE int rows() const;
     Q_INVOKABLE void setRows(int nRows);
