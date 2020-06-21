@@ -7,6 +7,9 @@ GroupBox
     property alias gridModel: view.model
     property alias gridViewEnabled: view.enabled
 
+    property alias nCellWidth: view.cellWidth
+    property alias nCellHeight: view.cellHeight
+
     property alias animationGameWin: animationGameWin
     property alias animationGameOver: animationGameOver
 
@@ -20,10 +23,15 @@ GroupBox
 
         FieldButton
         {
+            id: fieldButton
+
             nButtonIndex: itemIndex
             buttonText: itemValue.toString()
             visible: itemVisible
             color: itemColor
+
+            width: nCellWidth - 5
+            height: nCellHeight - 5
         }
     }
 
@@ -32,12 +40,8 @@ GroupBox
         id: view
         flow: GridView.FlowLeftToRight
 
-        property int nCellSize: 60
-
-        width: model.columns * nCellSize
-        height: model.rows * nCellSize
-        cellWidth: nCellSize
-        cellHeight: nCellSize
+        width: model.columns * nCellWidth
+        height: model.rows * nCellHeight
 
         delegate: buttonDelegate
 
@@ -46,6 +50,8 @@ GroupBox
             id: animationGameWin
             AnimImage
             {
+                //width: nCellWidth * 5
+                //height: nCellHeight * 3
                 imageSource: "icons/game_win.png"
             }
         }
@@ -54,6 +60,8 @@ GroupBox
             id: animationGameOver
             AnimImage
             {
+                //width: nCellWidth * 5
+                //height: nCellHeight * 3
                 imageSource: "icons/game_over.png"
             }
         }

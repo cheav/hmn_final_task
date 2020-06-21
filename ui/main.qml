@@ -12,10 +12,12 @@ Window
     title: qsTr("Game Find Sum")
 
     property int margin: 11
-    width: mainLayout.implicitWidth + 2 * margin
-    height: mainLayout.implicitHeight + 2 * margin
-    minimumWidth: mainLayout.Layout.minimumWidth + 2 * margin
-    minimumHeight: mainLayout.Layout.minimumHeight + 2 * margin
+    width: 700
+    height: 500
+    //width: mainLayout.implicitWidth + 2 * margin
+    //height: mainLayout.implicitHeight + 2 * margin
+    //minimumWidth: mainLayout.Layout.minimumWidth + 2 * margin
+    //minimumHeight: mainLayout.Layout.minimumHeight + 2 * margin
 
     GameModel { id: gameModel }
 
@@ -83,6 +85,12 @@ Window
             id: gameField
             gridModel: gameModel
 
+            width: root.width - targetLayout.width
+            height: root.height - controlPanel.height
+
+            nCellWidth: width / (gameModel.columns + 1)
+            nCellHeight: height / (gameModel.rows + 1)
+
             Loader
             {
                 id: animationLoader
@@ -92,6 +100,9 @@ Window
 
         ColumnLayout
         {
+            id: targetLayout
+            width: 50
+
             Label
             {
                 id: targetLabel
@@ -134,6 +145,7 @@ Window
         ControlPanel
         {
             id: controlPanel
+            height: 50
             Layout.columnSpan: 2
         }
     }

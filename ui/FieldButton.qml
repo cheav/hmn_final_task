@@ -6,11 +6,11 @@ Rectangle
     id: root
     property int nButtonIndex
     property alias buttonText: text.text
+    property alias nButtonWidth: root.width
+    property alias nButtonHeight: root.height
     signal clicked
 
     visible: false
-    height: 50
-    width: 50
     border.width: 1
     color: "white"
 
