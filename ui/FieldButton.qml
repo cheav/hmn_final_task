@@ -6,8 +6,7 @@ Rectangle
     id: root
     property int nButtonIndex
     property alias buttonText: text.text
-    property alias nButtonWidth: root.width
-    property alias nButtonHeight: root.height
+    property alias buttonFont: text.font.pointSize
     signal clicked
 
     visible: false

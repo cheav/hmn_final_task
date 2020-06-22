@@ -13,11 +13,7 @@ Window
 
     property int margin: 11
     width: 700
-    height: 500
-    //width: mainLayout.implicitWidth + 2 * margin
-    //height: mainLayout.implicitHeight + 2 * margin
-    //minimumWidth: mainLayout.Layout.minimumWidth + 2 * margin
-    //minimumHeight: mainLayout.Layout.minimumHeight + 2 * margin
+    height: 450
 
     GameModel { id: gameModel }
 

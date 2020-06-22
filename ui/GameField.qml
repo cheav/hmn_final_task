@@ -17,6 +17,11 @@ GroupBox
     Layout.fillWidth: true
     Layout.fillHeight: true
 
+    function calcFont(width, height)
+    {
+        return Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)) / 2
+    }
+
     Component
     {
         id: buttonDelegate
@@ -32,6 +37,7 @@ GroupBox
 
             width: nCellWidth - 5
             height: nCellHeight - 5
+            buttonFont: calcFont(width, height) / 2.5
         }
     }
 
